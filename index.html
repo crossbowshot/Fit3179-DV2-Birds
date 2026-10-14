@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Birds in our back yards</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+</head>
+<body>
+  <h1>Birds in our back yards</h1>
+
+  <div class="columns">
+    <div class="column">
+      <p>Placeholder text.</p>
+    </div>
+    <div class="column">
+      <div id="map_states"></div>
+    </div>
+    <div class="column"></div>
+
+    <!-- second row: spans columns 1 and 2 -->
+    <div class="column span-2">
+      <div id="map_suburbs"></div>
+    </div>
+    <div class="column">
+      <div id="lollipop_species"></div>
+      <div id="bump_monthly_ranks"></div>
+    </div>
+
+    <!-- third row -->
+    <div class="column">
+      <div id="ridgeline_seasonal"></div>
+    </div>
+    <div class="column">
+      <div id="map_canopy_dots"></div>
+    </div>
+    <div class="column">
+      <div id="dotplot_canopy_records"></div>
+    </div>
+  </div>
+
+  <script>
+    vegaEmbed('#map_states', 'js/map_states.vl.json', { actions: false });
+    vegaEmbed('#map_suburbs', 'js/map_suburbs.vl.json', { actions: false });
+    vegaEmbed('#lollipop_species', 'js/lollipop_species.vl.json', { actions: false });
+    vegaEmbed('#bump_monthly_ranks', 'js/bump_monthly_ranks.vl.json', { actions: false });
+    vegaEmbed('#ridgeline_seasonal', 'js/ridgeline_seasonal.vl.json', { actions: false });
+    vegaEmbed('#map_canopy_dots', 'js/map_canopy_dots.vl.json', { actions: false });
+    vegaEmbed('#dotplot_canopy_records', 'js/dotplot_canopy_records.vl.json', { actions: false });
+  </script>
+</body>
+</html>
