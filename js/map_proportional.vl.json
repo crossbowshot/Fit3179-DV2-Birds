@@ -1,0 +1,198 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Where Melbourne's bird records come from, 2024",
+    "subtitle": [
+      "Each circle's area shows the number of bird records in a suburb",
+      "Two of the five biggest circles are places where almost no one lives"
+    ],
+    "anchor": "start"
+  },
+  "width": 620,
+  "height": 540,
+  "projection": {
+    "type": "mercator"
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/melb_suburbs.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#ececec",
+        "stroke": "white",
+        "strokeWidth": 0.5
+      },
+      "encoding": {
+        "tooltip": {
+          "field": "properties.suburb",
+          "title": "Suburb"
+        }
+      }
+    },
+    {
+      "data": {
+        "url": "data/melb_suburb_points_2024.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lon": "number",
+            "lat": "number",
+            "bird_records": "number",
+            "population_2021": "number"
+          }
+        }
+      },
+      "mark": {
+        "type": "circle",
+        "color": "#238b45",
+        "opacity": 0.55,
+        "stroke": "white",
+        "strokeWidth": 0.6
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "size": {
+          "field": "bird_records",
+          "type": "quantitative",
+          "scale": {
+            "type": "linear",
+            "zero": true,
+            "range": [
+              0,
+              1600
+            ]
+          },
+          "legend": {
+            "title": "Bird records",
+            "orient": "bottom-left",
+            "values": [
+              1000,
+              10000,
+              50000
+            ],
+            "format": ",.0f",
+            "symbolFillColor": "#238b45",
+            "symbolOpacity": 0.55,
+            "symbolStrokeColor": "white",
+            "labelFontSize": 11
+          }
+        },
+        "order": {
+          "field": "bird_records",
+          "sort": "descending"
+        },
+        "tooltip": [
+          {
+            "field": "suburb",
+            "title": "Suburb"
+          },
+          {
+            "field": "bird_records",
+            "title": "Bird records (2024)",
+            "format": ","
+          },
+          {
+            "field": "population_2021",
+            "title": "Residents (2021 Census)",
+            "format": ","
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 144.6184,
+            "lat": -37.9623,
+            "lon2": 144.74,
+            "lat2": -38.12
+          },
+          {
+            "lon": 145.1239,
+            "lat": -38.0013,
+            "lon2": 145.5,
+            "lat2": -38.25
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#444",
+        "strokeWidth": 0.8
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "longitude2": {
+          "field": "lon2"
+        },
+        "latitude2": {
+          "field": "lat2"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 144.74,
+            "lat": -38.12,
+            "text": "Western Treatment Plant\n(Cocoroc): 57,416 records,\nno residents"
+          },
+          {
+            "lon": 145.5,
+            "lat": -38.25,
+            "text": "Braeside: 27,494 records,\n25 residents"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 3,
+        "fontSize": 11,
+        "lineBreak": "\n",
+        "color": "#222"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "text"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

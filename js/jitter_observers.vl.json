@@ -1,0 +1,168 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "A few keen people make most of the records",
+    "subtitle": [
+      "Each dot is one iNaturalist user who recorded birds in Greater Melbourne in 2024 (2,509 people)",
+      "The most active 1% (25 people) made 45% of all records; 972 people made just one"
+    ],
+    "anchor": "start"
+  },
+  "width": 600,
+  "height": 230,
+  "data": {
+    "url": "data/inat_observer_records_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "records": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.records >= 4246 ? 0.5 : random()",
+      "as": "jitter"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "circle",
+        "size": 18,
+        "opacity": 0.35,
+        "color": "#238b45"
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "records",
+            "title": "Records by this person",
+            "format": ","
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "records": 1,
+            "jitter": 1.03,
+            "jitter2": 1.22
+          },
+          {
+            "records": 4246,
+            "jitter": 0.56,
+            "jitter2": 1.22
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#666",
+        "strokeWidth": 0.8
+      },
+      "encoding": {
+        "y2": {
+          "field": "jitter2"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "records": 1,
+            "jitter": 1.25,
+            "text": "972 people made\njust one record"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "baseline": "bottom",
+        "fontSize": 11,
+        "color": "#222",
+        "lineBreak": "\n",
+        "align": "left",
+        "dx": -2
+      },
+      "encoding": {
+        "text": {
+          "field": "text"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "records": 4246,
+            "jitter": 1.25,
+            "text": "One person: 4,246 records,\nabout 1 in 10 iNaturalist records"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "baseline": "bottom",
+        "fontSize": 11,
+        "color": "#222",
+        "lineBreak": "\n",
+        "align": "right",
+        "dx": 4
+      },
+      "encoding": {
+        "text": {
+          "field": "text"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "records",
+      "type": "quantitative",
+      "scale": {
+        "type": "log",
+        "domain": [
+          1,
+          5000
+        ]
+      },
+      "axis": {
+        "title": "Bird records made by one person in 2024 (each gridline is 10 times the one before)",
+        "values": [
+          1,
+          10,
+          100,
+          1000
+        ],
+        "format": ",d",
+        "grid": true,
+        "gridColor": "#e6e6e6",
+        "domain": false,
+        "ticks": false,
+        "labelFontSize": 11,
+        "titleLimit": 600
+      }
+    },
+    "y": {
+      "field": "jitter",
+      "type": "quantitative",
+      "axis": null,
+      "scale": {
+        "domain": [
+          -0.08,
+          1.55
+        ]
+      }
+    }
+  }
+}

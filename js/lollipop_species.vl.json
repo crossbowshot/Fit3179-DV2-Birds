@@ -1,0 +1,165 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Melbourne's 15 most reported birds, 2024",
+    "subtitle": [
+      "No single bird dominates: the top species is just 3.7%",
+      "of 1,060,628 records",
+      "Only one bird introduced from overseas, the Common Myna,",
+      "makes the top 10; the Spotted Dove is 11th"
+    ],
+    "anchor": "start"
+  },
+  "width": "container",
+  "height": 368,
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 45,
+    "bottom": 5
+  },
+  "data": {
+    "url": "data/melb_top15_species_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "rank": "number",
+        "records": "number",
+        "birds_counted": "number",
+        "share_pct": "number"
+      }
+    }
+  },
+  "encoding": {
+    "y": {
+      "field": "species",
+      "type": "nominal",
+      "sort": {
+        "field": "records",
+        "order": "descending"
+      },
+      "axis": {
+        "title": null,
+        "domain": false,
+        "ticks": false,
+        "labelFontSize": 12,
+        "labelPadding": 6,
+        "labelLimit": 300
+      }
+    },
+    "x": {
+      "field": "records",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          0,
+          44000
+        ]
+      },
+      "axis": {
+        "title": "Bird records in Greater Melbourne (2024)",
+        "format": ",d",
+        "tickCount": 5,
+        "grid": false
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 2
+      },
+      "encoding": {
+        "x2": {
+          "datum": 0
+        },
+        "color": {
+          "field": "status",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Native",
+              "Introduced"
+            ],
+            "range": [
+              "#41ab5d",
+              "#e6550d"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 110,
+        "opacity": 1
+      },
+      "encoding": {
+        "color": {
+          "field": "status",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Native",
+              "Introduced"
+            ],
+            "range": [
+              "#41ab5d",
+              "#e6550d"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "bottom",
+            "symbolType": "circle",
+            "labelFontSize": 12,
+            "direction": "horizontal"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "species",
+            "title": "Species"
+          },
+          {
+            "field": "records",
+            "title": "Records",
+            "format": ","
+          },
+          {
+            "field": "share_pct",
+            "title": "Share of all records (%)",
+            "format": ".1f"
+          },
+          {
+            "field": "status",
+            "title": "Status in Australia"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 9,
+        "fontSize": 11,
+        "color": "#444"
+      },
+      "encoding": {
+        "text": {
+          "field": "records",
+          "type": "quantitative",
+          "format": ","
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

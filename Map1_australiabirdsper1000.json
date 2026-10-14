@@ -1,0 +1,246 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Bird records per 1,000 residents, 2025",
+    "subtitle": "The Northern Territory has the fewest residents but the highest rate",
+    "anchor": "start"
+  },
+  "width": 560,
+  "height": 480,
+  "projection": {
+    "type": "conicEqualArea",
+    "parallels": [
+      -18,
+      -36
+    ],
+    "rotate": [
+      -132,
+      0
+    ]
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/au_states.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "lookup": "properties.STATE_NAME",
+          "from": {
+            "data": {
+              "url": "data/state_bird_records_2025.csv",
+              "format": {
+                "type": "csv",
+                "parse": {
+                  "bird_records": "number",
+                  "population_2025": "number",
+                  "records_per_1000_residents": "number"
+                }
+              }
+            },
+            "key": "state",
+            "fields": [
+              "bird_records",
+              "population_2025",
+              "records_per_1000_residents"
+            ]
+          }
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "color": {
+          "field": "records_per_1000_residents",
+          "type": "quantitative",
+          "scale": {
+            "scheme": "greens"
+          },
+          "legend": {
+            "title": "Bird records per 1,000 residents",
+            "orient": "bottom-left",
+            "direction": "horizontal",
+            "gradientLength": 180,
+            "titleLimit": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "properties.STATE_NAME",
+            "title": "State"
+          },
+          {
+            "field": "records_per_1000_residents",
+            "title": "Records per 1,000 residents",
+            "format": ",.1f"
+          },
+          {
+            "field": "bird_records",
+            "title": "Bird records (2025)",
+            "format": ","
+          },
+          {
+            "field": "population_2025",
+            "title": "Residents (June 2025)",
+            "format": ","
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 149.13,
+            "lat": -35.3,
+            "lon2": 152.6,
+            "lat2": -36.4
+          },
+          {
+            "lon": 147.9,
+            "lat": -42.0,
+            "lon2": 150.6,
+            "lat2": -42.3
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#555",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "longitude2": {
+          "field": "lon2"
+        },
+        "latitude2": {
+          "field": "lat2"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "state": "Western Australia",
+            "abbr": "WA",
+            "lon": 121.5,
+            "lat": -25.5
+          },
+          {
+            "state": "Northern Territory",
+            "abbr": "NT",
+            "lon": 133.4,
+            "lat": -19.8
+          },
+          {
+            "state": "Queensland",
+            "abbr": "QLD",
+            "lon": 144.5,
+            "lat": -22.5
+          },
+          {
+            "state": "South Australia",
+            "abbr": "SA",
+            "lon": 135.3,
+            "lat": -29.8
+          },
+          {
+            "state": "New South Wales",
+            "abbr": "NSW",
+            "lon": 146.4,
+            "lat": -32.3
+          },
+          {
+            "state": "Victoria",
+            "abbr": "VIC",
+            "lon": 144.2,
+            "lat": -36.9
+          },
+          {
+            "state": "Tasmania",
+            "abbr": "TAS",
+            "lon": 151.8,
+            "lat": -42.6
+          },
+          {
+            "state": "Australian Capital Territory",
+            "abbr": "ACT",
+            "lon": 153.6,
+            "lat": -36.9
+          }
+        ]
+      },
+      "transform": [
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "url": "data/state_bird_records_2025.csv",
+              "format": {
+                "type": "csv",
+                "parse": {
+                  "records_per_1000_residents": "number"
+                }
+              }
+            },
+            "key": "state",
+            "fields": [
+              "records_per_1000_residents"
+            ]
+          }
+        },
+        {
+          "calculate": "datum.abbr + '\\n' + format(datum.records_per_1000_residents, '.0f')",
+          "as": "label"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "lineBreak": "\n"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.records_per_1000_residents > 600",
+            "value": "white"
+          },
+          "value": "#222"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

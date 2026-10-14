@@ -1,0 +1,15 @@
+species,records,birds,rank_records,rank_birds,y_records,y_birds,change
+Australian Magpie,39060,152805,1,17,1.0,17.0,Ranks higher by number of records
+Rainbow Lorikeet,31658,244947,2,5,2.0,5.0,Ranks higher by number of records
+Little Raven,30974,144572,3,19,3.0,19.0,Ranks higher by number of records
+Noisy Miner,30741,193112,4,11,4.0,11.0,Ranks higher by number of records
+Magpie-lark,27335,79178,5,30,5.0,30.0,Ranks higher by number of records
+Red Wattlebird,27222,95489,6,26,6.0,26.0,Ranks higher by number of records
+Common Myna,25434,128452,7,20,7.0,20.0,Ranks higher by number of records
+Welcome Swallow,22907,209421,8,8,8.0,8.0,Same rank both ways
+Eurasian Coot,18050,677279,15,1,15.0,1.0,Ranks higher by number of birds counted
+Silver Gull,15563,412959,22,2,22.0,2.0,Ranks higher by number of birds counted
+Common Starling,15379,222385,23,6,23.0,6.0,Ranks higher by number of birds counted
+Chestnut Teal,14470,257259,24,4,24.0,4.0,Ranks higher by number of birds counted
+Grey Teal,10026,215448,36,7,32.0,7.0,Ranks higher by number of birds counted
+Australian Shelduck,1324,311546,111,3,34.0,3.0,Ranks higher by number of birds counted

@@ -1,0 +1,15 @@
+sal_code,suburb,area_km2,tree_km2,records,tree_cover_pct,share_of_trees_pct,share_of_records_pct,share_of_land_pct
+SAL21640,Melbourne,5.41,0.913,1032,16.9,21.5,34.9,14.4
+SAL22038,Parkville,3.97,0.857,1015,21.6,20.2,34.4,10.6
+SAL20830,East Melbourne,1.86,0.451,95,24.3,10.6,3.2,4.9
+SAL21966,North Melbourne,2.36,0.3,10,12.7,7.0,0.3,6.3
+SAL21327,Kensington,2.13,0.285,20,13.4,6.7,0.7,5.7
+SAL20495,Carlton,1.77,0.269,186,15.2,6.3,6.3,4.7
+SAL22314,South Yarra,1.03,0.239,10,23.2,5.6,0.3,2.7
+SAL22107,Port Melbourne,5.09,0.212,312,4.2,5.0,10.6,13.6
+SAL22757,West Melbourne,6.58,0.195,28,3.0,4.6,0.9,17.5
+SAL20496,Carlton North,0.91,0.153,22,16.7,3.6,0.7,2.4
+SAL20929,Flemington,1.71,0.139,12,8.1,3.3,0.4,4.6
+SAL22315,Southbank,1.3,0.124,71,9.5,2.9,2.4,3.5
+SAL20766,Docklands,3.15,0.11,119,3.5,2.6,4.0,8.4
+SAL22313,South Wharf,0.29,0.005,21,1.8,0.1,0.7,0.8

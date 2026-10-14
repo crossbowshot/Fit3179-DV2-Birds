@@ -1,0 +1,22 @@
+body {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+/* three equal columns */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+/* a box that takes up two columns instead of one */
+.span-2 {
+  grid-column: span 2;
+}

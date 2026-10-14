@@ -1,0 +1,105 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Birds don't keep office hours, but birdwatchers do",
+    "subtitle": [
+      "iNaturalist bird records in Greater Melbourne by day and hour, 2024",
+      "An average weekend day has nearly a quarter more records than a weekday; almost none are made before 7am",
+      "The Monday lunchtime hot spot is mostly one keen person: 421 of its 987 records"
+    ],
+    "anchor": "start"
+  },
+  "width": 560,
+  "height": 210,
+  "data": {
+    "url": "data/inat_weekday_hour_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "weekday_num": "number",
+        "hour": "number",
+        "records": "number"
+      }
+    }
+  },
+  "mark": {
+    "type": "rect",
+    "stroke": "white",
+    "strokeWidth": 1
+  },
+  "encoding": {
+    "x": {
+      "field": "hour",
+      "type": "ordinal",
+      "title": null,
+      "axis": {
+        "labelAngle": 0,
+        "values": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21
+        ],
+        "labelExpr": "datum.value == 0 ? '12am' : datum.value < 12 ? datum.value + 'am' : datum.value == 12 ? '12pm' : (datum.value - 12) + 'pm'",
+        "ticks": false,
+        "domain": false
+      }
+    },
+    "y": {
+      "field": "weekday",
+      "type": "ordinal",
+      "sort": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
+      "title": null,
+      "axis": {
+        "ticks": false,
+        "domain": false,
+        "labelFontSize": 12
+      }
+    },
+    "color": {
+      "field": "records",
+      "type": "quantitative",
+      "scale": {
+        "scheme": "greens"
+      },
+      "legend": {
+        "title": "Records",
+        "orient": "right",
+        "format": ",d",
+        "gradientLength": 160
+      }
+    },
+    "tooltip": [
+      {
+        "field": "weekday",
+        "title": "Day"
+      },
+      {
+        "field": "hour",
+        "title": "Hour starting (24h)"
+      },
+      {
+        "field": "records",
+        "title": "Records",
+        "format": ","
+      }
+    ]
+  },
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Most reported or most numerous? It depends how you count",
+    "subtitle": [
+      "Rank of each species by number of records (left) and by number of birds counted (right), Greater Melbourne, 2024",
+      "Backyard birds are reported most often; waterbirds in big flocks dominate the headcount",
+      "Ranks below 30 (Grey Teal, Australian Shelduck) are squeezed in at the bottom to fit"
+    ],
+    "anchor": "start"
+  },
+  "width": 300,
+  "height": 470,
+  "data": {
+    "url": "data/melb_records_vs_birds_rank_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "rank_records": "number",
+        "rank_birds": "number",
+        "y_records": "number",
+        "y_birds": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "fold": [
+        "y_records",
+        "y_birds"
+      ],
+      "as": [
+        "measure",
+        "y"
+      ]
+    },
+    {
+      "calculate": "datum.measure === 'y_records' ? 'Ranked by records' : 'Ranked by birds counted'",
+      "as": "side"
+    },
+    {
+      "calculate": "datum.measure === 'y_records' ? datum.rank_records : datum.rank_birds",
+      "as": "true_rank"
+    },
+    {
+      "calculate": "datum.measure === 'y_records' ? datum.species + '  ' + datum.true_rank : datum.true_rank + '  ' + datum.species",
+      "as": "label"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "side",
+      "type": "nominal",
+      "sort": [
+        "Ranked by records",
+        "Ranked by birds counted"
+      ],
+      "axis": {
+        "title": null,
+        "orient": "top",
+        "labelAngle": 0,
+        "labelFontSize": 12,
+        "labelFontWeight": "bold",
+        "domain": false,
+        "ticks": false,
+        "labelLimit": 500,
+        "labelPadding": 10
+      },
+      "scale": {
+        "padding": 0.05
+      }
+    },
+    "y": {
+      "field": "y",
+      "type": "quantitative",
+      "scale": {
+        "reverse": true,
+        "domain": [
+          -0.5,
+          34
+        ]
+      },
+      "axis": null
+    },
+    "color": {
+      "field": "change",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Ranks higher by number of records",
+          "Ranks higher by number of birds counted",
+          "Same rank both ways"
+        ],
+        "range": [
+          "#E69F00",
+          "#0072B2",
+          "#999999"
+        ]
+      },
+      "legend": {
+        "title": null,
+        "orient": "bottom",
+        "direction": "vertical",
+        "labelFontSize": 11,
+        "labelLimit": 500
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2,
+        "opacity": 0.8
+      },
+      "encoding": {
+        "detail": {
+          "field": "species"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 50,
+        "opacity": 1
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.measure === 'y_records'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -8,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        },
+        "color": {
+          "value": "#222"
+        }
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.measure === 'y_birds'"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 8,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "label"
+        },
+        "color": {
+          "value": "#222"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

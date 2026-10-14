@@ -1,0 +1,250 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Bird records per 1,000 residents, Melbourne suburbs, 2024",
+    "subtitle": [
+      "Records pile up where the birds and birders are, not where most people live",
+      "Grey suburbs have fewer than 1,000 residents, too few for a fair rate"
+    ],
+    "anchor": "start"
+  },
+  "width": "container",
+  "height": 950,
+  "padding": {
+    "left": 60,
+    "top": 5,
+    "right": 5,
+    "bottom": 5
+  },
+  "projection": {
+    "type": "mercator"
+  },
+  "params": [
+    {
+      "name": "minPop",
+      "value": 1000
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "data/melb_suburbs.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "transform": [
+        {
+          "lookup": "properties.sal_code",
+          "from": {
+            "data": {
+              "url": "data/melb_suburb_bird_records_2024.csv",
+              "format": {
+                "type": "csv",
+                "parse": {
+                  "bird_records": "number",
+                  "population_2021": "number",
+                  "records_per_1000_residents": "number"
+                }
+              }
+            },
+            "key": "sal_code",
+            "fields": [
+              "suburb",
+              "bird_records",
+              "population_2021",
+              "records_per_1000_residents"
+            ]
+          }
+        },
+        {
+          "calculate": "datum.population_2021 < minPop ? 'Fewer than 1,000 residents' : datum.records_per_1000_residents < 25 ? 'Under 25' : datum.records_per_1000_residents < 100 ? '25 to 100' : datum.records_per_1000_residents < 250 ? '100 to 250' : datum.records_per_1000_residents < 500 ? '250 to 500' : datum.records_per_1000_residents < 1000 ? '500 to 1,000' : '1,000 or more'",
+          "as": "rate_band"
+        }
+      ],
+      "mark": {
+        "type": "geoshape",
+        "stroke": "white",
+        "strokeWidth": 0.4
+      },
+      "encoding": {
+        "color": {
+          "field": "rate_band",
+          "type": "ordinal",
+          "scale": {
+            "domain": [
+              "Fewer than 1,000 residents",
+              "Under 25",
+              "25 to 100",
+              "100 to 250",
+              "250 to 500",
+              "500 to 1,000",
+              "1,000 or more"
+            ],
+            "range": [
+              "#dedede",
+              "#c7e9c0",
+              "#a1d99b",
+              "#74c476",
+              "#41ab5d",
+              "#238b45",
+              "#005a32"
+            ]
+          },
+          "legend": {
+            "title": "Records per 1,000 residents",
+            "titleLimit": 300,
+            "orient": "bottom-left",
+            "symbolType": "square",
+            "symbolSize": 160,
+            "labelFontSize": 11,
+            "labelLimit": 260
+          }
+        },
+        "tooltip": [
+          {
+            "field": "suburb",
+            "title": "Suburb"
+          },
+          {
+            "field": "records_per_1000_residents",
+            "title": "Records per 1,000 residents",
+            "format": ",.0f"
+          },
+          {
+            "field": "bird_records",
+            "title": "Bird records (2024)",
+            "format": ","
+          },
+          {
+            "field": "population_2021",
+            "title": "Residents (2021 Census)",
+            "format": ","
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 145.152,
+            "lat": -38.381,
+            "lon2": 145.33,
+            "lat2": -38.47
+          },
+          {
+            "lon": 144.66,
+            "lat": -37.836,
+            "lon2": 144.45,
+            "lat2": -37.7
+          },
+          {
+            "lon": 144.618,
+            "lat": -37.962,
+            "lon2": 144.77,
+            "lat2": -38.08
+          }
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "color": "#444",
+        "strokeWidth": 0.8
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "longitude2": {
+          "field": "lon2"
+        },
+        "latitude2": {
+          "field": "lat2"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 144.77,
+            "lat": -38.08,
+            "text": "Western Treatment Plant\n(Cocoroc): 57,416\nrecords, no residents"
+          },
+          {
+            "lon": 145.33,
+            "lat": -38.47,
+            "text": "Somers: highest rate,\n4,113 records per\n1,000 residents"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "lineBreak": "\n",
+        "baseline": "middle",
+        "dx": 3,
+        "color": "#222",
+        "align": "left"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "text"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "lon": 144.45,
+            "lat": -37.7,
+            "text": "Tarneit: 56,370 residents\nbut only 388 bird records"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "lineBreak": "\n",
+        "baseline": "middle",
+        "dx": -3,
+        "color": "#222",
+        "align": "right"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "text"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

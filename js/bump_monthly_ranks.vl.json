@@ -1,0 +1,216 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "The everyday birds swap places through the year",
+    "subtitle": [
+      "How Greater Melbourne's 10 most reported birds of 2024",
+      "rank against each other each month (1 = most reported)",
+      "The Australian Magpie is first every month. Common Mynas",
+      "swing from 10th in April to 2nd in December, Red Wattlebirds",
+      "climb from 9th to 4th, and Welcome Swallows move between",
+      "last and 7th"
+    ],
+    "anchor": "start"
+  },
+  "width": "container",
+  "height": 300,
+  "data": {
+    "url": "data/melb_species_month_rank_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "month": "number",
+        "records": "number",
+        "rank": "number",
+        "rank_all": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.rank_all == 1 ? '1st' : datum.rank_all == 2 ? '2nd' : datum.rank_all == 3 ? '3rd' : datum.rank_all + 'th'",
+      "as": "rank_all_label"
+    },
+    {
+      "calculate": "indexof(['Welcome Swallow', 'Common Myna', 'Red Wattlebird'], datum.species) >= 0 ? datum.species : 'Other'",
+      "as": "highlight"
+    },
+    {
+      "calculate": "['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][datum.month - 1]",
+      "as": "month_name"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "month",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          1,
+          12
+        ],
+        "nice": false
+      },
+      "axis": {
+        "title": null,
+        "values": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "labelExpr": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][datum.value - 1]",
+        "grid": false,
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "y": {
+      "field": "rank",
+      "type": "quantitative",
+      "scale": {
+        "reverse": true,
+        "domain": [
+          0.5,
+          10.5
+        ],
+        "nice": false
+      },
+      "axis": {
+        "title": "Rank that month",
+        "values": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "grid": true,
+        "gridColor": "#eeeeee",
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "color": {
+      "field": "highlight",
+      "type": "nominal",
+      "scale": {
+        "domain": [
+          "Welcome Swallow",
+          "Common Myna",
+          "Red Wattlebird",
+          "Other"
+        ],
+        "range": [
+          "#0072B2",
+          "#D55E00",
+          "#CC79A7",
+          "#c8c8c8"
+        ]
+      },
+      "legend": null
+    },
+    "detail": {
+      "field": "species"
+    }
+  },
+  "layer": [
+    {
+      "transform": [
+        {
+          "filter": "datum.highlight == 'Other'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 2
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.highlight != 'Other'"
+        }
+      ],
+      "mark": {
+        "type": "line",
+        "strokeWidth": 3
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 45,
+        "opacity": 1
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "species",
+            "title": "Bird"
+          },
+          {
+            "field": "month_name",
+            "title": "Month"
+          },
+          {
+            "field": "rank",
+            "title": "Rank among these 10"
+          },
+          {
+            "field": "rank_all_label",
+            "title": "Rank among all birds that month"
+          },
+          {
+            "field": "records",
+            "title": "Records",
+            "format": ","
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.month == 12"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 9,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "species"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.highlight != 'Other'",
+            "value": "#222222"
+          },
+          "value": "#8c8c8c"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

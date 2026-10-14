@@ -1,0 +1,216 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Some birds come and go with the seasons",
+    "subtitle": [
+      "When in the year each bird is reported in Greater Melbourne,",
+      "2024, allowing for how much birdwatching happens each month",
+      "Spring and summer migrants like the Sacred Kingfisher are",
+      "almost absent for 3 to 5 months of the year",
+      "The autumn and winter birds are seen all year round, but are",
+      "reported most in their peak months"
+    ],
+    "anchor": "start",
+    "offset": 16,
+    "fontSize": 12,
+    "subtitleFontSize": 10
+  },
+  "width": "container",
+  "height": 300,
+  "data": {
+    "url": "data/melb_seasonal_species_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "month": "number",
+        "records": "number",
+        "profile_pct": "number",
+        "peak_month": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][datum.month - 1]",
+      "as": "month_name"
+    },
+    {
+      "window": [
+        {
+          "op": "dense_rank",
+          "as": "row"
+        }
+      ],
+      "sort": [
+        {
+          "field": "peak_month"
+        },
+        {
+          "field": "species"
+        }
+      ]
+    },
+    {
+      "joinaggregate": [
+        {
+          "op": "max",
+          "field": "profile_pct",
+          "as": "max_profile"
+        }
+      ]
+    },
+    {
+      "calculate": "datum.row - datum.profile_pct / datum.max_profile * 2.3",
+      "as": "ridge_top"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "month",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          1,
+          12
+        ],
+        "nice": false
+      },
+      "axis": {
+        "title": null,
+        "values": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "labelExpr": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][datum.value - 1]",
+        "grid": false,
+        "domain": false,
+        "ticks": false
+      }
+    },
+    "y": {
+      "field": "ridge_top",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          -1.4,
+          12
+        ],
+        "reverse": true,
+        "nice": false,
+        "zero": false
+      },
+      "axis": null
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "fillOpacity": 0.85,
+        "stroke": "white",
+        "strokeWidth": 1
+      },
+      "encoding": {
+        "y2": {
+          "field": "row"
+        },
+        "detail": {
+          "field": "species"
+        },
+        "fill": {
+          "field": "season",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Summer",
+              "Autumn",
+              "Winter",
+              "Spring"
+            ],
+            "range": [
+              "#E69F00",
+              "#A6761D",
+              "#0072B2",
+              "#009E73"
+            ]
+          },
+          "legend": {
+            "title": "Busiest season",
+            "orient": "bottom",
+            "direction": "horizontal",
+            "symbolType": "square",
+            "labelFontSize": 11
+          }
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "point",
+        "opacity": 0,
+        "size": 120
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "species",
+            "title": "Bird"
+          },
+          {
+            "field": "month_name",
+            "title": "Month"
+          },
+          {
+            "field": "records",
+            "title": "Records that month",
+            "format": ","
+          },
+          {
+            "field": "profile_pct",
+            "title": "Share of its year (%, allowing for birdwatching)",
+            "format": ".0f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.month == 1"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "baseline": "bottom",
+        "dx": -6,
+        "fontSize": 11,
+        "color": "#222"
+      },
+      "encoding": {
+        "y": {
+          "field": "row"
+        },
+        "text": {
+          "field": "species"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

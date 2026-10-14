@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>All charts (test page, delete before submission)</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
+  <style>
+    body { font-family: sans-serif; margin: 16px; }
+    h2 { font-size: 14px; color: #666; margin: 32px 0 8px; }
+  </style>
+</head>
+<body>
+  <div id="charts"></div>
+  <script>
+    // in story order: 1 where, 2 what, 3 what impacts observations, 4 who
+    const specs = ['map_states', 'map_suburbs', 'map_proportional',
+                   'lollipop_species', 'slope_records_vs_birds', 'ridgeline_seasonal', 'bump_monthly_ranks',
+                   'map_canopy_dots', 'dotplot_canopy_records',
+                   'jitter_observers', 'heatmap_weekday_hour'];
+    // always fetch fresh specs and data, so an edited file never shows a stale cached chart
+    const loader = vega.loader({ http: { cache: 'no-cache' } });
+    for (const name of specs) {
+      const h = document.createElement('h2');
+      h.textContent = 'js/' + name + '.vl.json';
+      const div = document.createElement('div');
+      div.id = name;
+      document.getElementById('charts').append(h, div);
+      vegaEmbed('#' + name, 'js/' + name + '.vl.json', { loader })
+        .catch(err => { div.textContent = 'ERROR: ' + err.message; div.style.color = 'red'; });
+    }
+  </script>
+</body>
+</html>

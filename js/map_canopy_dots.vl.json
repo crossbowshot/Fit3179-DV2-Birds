@@ -1,0 +1,263 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Do birdwatchers follow the trees?",
+    "subtitle": [
+      "Each dot is one iNaturalist bird record in the City of",
+      "Melbourne, 2024; green squares show tree cover in 2021",
+      "Trees cover 11% of the City, but more than a quarter of the",
+      "records (29%) were made under a tree",
+      "iNaturalist only: it is the one source that records where",
+      "each bird was seen, to about 10 m"
+    ],
+    "anchor": "start",
+    "fontSize": 12,
+    "subtitleFontSize": 10
+  },
+  "width": "container",
+  "height": 430,
+  "projection": {
+    "type": "mercator"
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "data/com_outline.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#f1f1ed",
+        "stroke": null
+      }
+    },
+    {
+      "data": {
+        "url": "data/com_canopy_grid_2021.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lon": "number",
+            "lat": "number",
+            "tree_pct": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.lon + 0.0006",
+          "as": "lon2"
+        },
+        {
+          "calculate": "datum.lat + 0.0005",
+          "as": "lat2"
+        },
+        {
+          "calculate": "datum.tree_pct < 10 ? 'Under 10%' : datum.tree_pct < 25 ? '10 to 25%' : datum.tree_pct < 50 ? '25 to 50%' : '50% or more'",
+          "as": "tree_band"
+        }
+      ],
+      "mark": {
+        "type": "rect"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "longitude2": {
+          "field": "lon2"
+        },
+        "latitude2": {
+          "field": "lat2"
+        },
+        "color": {
+          "field": "tree_band",
+          "type": "ordinal",
+          "scale": {
+            "domain": [
+              "No trees",
+              "Under 10%",
+              "10 to 25%",
+              "25 to 50%",
+              "50% or more"
+            ],
+            "range": [
+              "#f1f1ed",
+              "#d9efd3",
+              "#a8d99c",
+              "#5fb365",
+              "#21823f"
+            ]
+          },
+          "legend": {
+            "title": "Ground covered by trees",
+            "orient": "bottom",
+            "symbolType": "square",
+            "symbolSize": 160,
+            "symbolStrokeColor": "#cccccc",
+            "labelFontSize": 11,
+            "titleLimit": 300,
+            "direction": "horizontal",
+            "columns": 3
+          }
+        },
+        "tooltip": [
+          {
+            "field": "tree_pct",
+            "title": "Ground covered by trees (%)"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "data/com_outline.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "filled": false,
+        "stroke": "#8a8a8a",
+        "strokeWidth": 0.7
+      }
+    },
+    {
+      "data": {
+        "url": "data/com_inat_points_2024.csv",
+        "format": {
+          "type": "csv",
+          "parse": {
+            "lon": "number",
+            "lat": "number",
+            "under_trees": "number"
+          }
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.under_trees == 1 ? 'Yes' : 'No'",
+          "as": "under_label"
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "size": 9,
+        "color": "#d94801",
+        "opacity": 0.75
+      },
+      "encoding": {
+        "longitude": {
+          "field": "lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "lat",
+          "type": "quantitative"
+        },
+        "tooltip": [
+          {
+            "field": "bird",
+            "title": "Bird"
+          },
+          {
+            "field": "date",
+            "title": "Date"
+          },
+          {
+            "field": "under_label",
+            "title": "Under a tree?"
+          }
+        ]
+      }
+    },
+    {
+      "data": {
+        "url": "data/com_outline.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "fontWeight": "bold",
+        "color": "white",
+        "stroke": "white",
+        "strokeWidth": 3,
+        "opacity": 0.85,
+        "lineBreak": "\n"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "properties.label_lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.label_lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.properties.suburb == 'South Wharf' ? 'South\\nWharf' : datum.properties.suburb",
+          "as": "label"
+        }
+      ]
+    },
+    {
+      "data": {
+        "url": "data/com_outline.geojson",
+        "format": {
+          "type": "json",
+          "property": "features"
+        }
+      },
+      "mark": {
+        "type": "text",
+        "fontSize": 10,
+        "fontWeight": "bold",
+        "color": "#4d4d4d",
+        "lineBreak": "\n"
+      },
+      "encoding": {
+        "longitude": {
+          "field": "properties.label_lon",
+          "type": "quantitative"
+        },
+        "latitude": {
+          "field": "properties.label_lat",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "label"
+        }
+      },
+      "transform": [
+        {
+          "calculate": "datum.properties.suburb == 'South Wharf' ? 'South\\nWharf' : datum.properties.suburb",
+          "as": "label"
+        }
+      ]
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}

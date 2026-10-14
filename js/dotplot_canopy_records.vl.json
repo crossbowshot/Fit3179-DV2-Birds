@@ -1,0 +1,165 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "title": {
+    "text": "Two big parks get most of the attention",
+    "subtitle": [
+      "Each suburb's share of the City of Melbourne's trees (2021)",
+      "and of its iNaturalist bird records (2024)",
+      "Parkville and Melbourne hold 42% of the City's trees but",
+      "69% of its bird records",
+      "East Melbourne has 11% of the trees, including the Fitzroy",
+      "Gardens, but only 3% of the records"
+    ],
+    "anchor": "start",
+    "fontSize": 12,
+    "subtitleFontSize": 10
+  },
+  "width": "container",
+  "height": 360,
+  "data": {
+    "url": "data/com_suburb_canopy_records_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "records": "number",
+        "tree_cover_pct": "number",
+        "share_of_trees_pct": "number",
+        "share_of_records_pct": "number"
+      }
+    }
+  },
+  "transform": [
+    {
+      "calculate": "datum.suburb == 'Melbourne' ? 'Melbourne (CBD, Botanic Gardens)' : datum.suburb == 'Parkville' ? 'Parkville (Royal Park)' : datum.suburb == 'East Melbourne' ? 'East Melbourne (Fitzroy Gardens)' : datum.suburb",
+      "as": "place"
+    },
+    {
+      "fold": [
+        "share_of_trees_pct",
+        "share_of_records_pct"
+      ],
+      "as": [
+        "measure",
+        "share"
+      ]
+    },
+    {
+      "calculate": "datum.measure == 'share_of_trees_pct' ? \"Share of the City's trees\" : 'Share of the bird records'",
+      "as": "what"
+    }
+  ],
+  "encoding": {
+    "y": {
+      "field": "place",
+      "type": "nominal",
+      "sort": {
+        "field": "share_of_trees_pct",
+        "op": "max",
+        "order": "descending"
+      },
+      "axis": {
+        "title": null,
+        "domain": false,
+        "ticks": false,
+        "labelFontSize": 11,
+        "labelLimit": 300,
+        "labelPadding": 8
+      }
+    },
+    "x": {
+      "field": "share",
+      "type": "quantitative",
+      "scale": {
+        "domain": [
+          0,
+          40
+        ]
+      },
+      "axis": {
+        "title": [
+          "Share of the City of Melbourne's",
+          "total (%)"
+        ],
+        "format": "d",
+        "tickCount": 4,
+        "grid": true,
+        "gridColor": "#eeeeee",
+        "domain": false
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "line",
+        "color": "#c4c4c4",
+        "strokeWidth": 2.5
+      },
+      "encoding": {
+        "detail": {
+          "field": "place"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 90,
+        "opacity": 1
+      },
+      "encoding": {
+        "color": {
+          "field": "what",
+          "type": "nominal",
+          "scale": {
+            "domain": [
+              "Share of the City's trees",
+              "Share of the bird records"
+            ],
+            "range": [
+              "#21823f",
+              "#d94801"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "bottom-right",
+            "symbolType": "circle",
+            "labelFontSize": 11,
+            "labelLimit": 300
+          }
+        },
+        "tooltip": [
+          {
+            "field": "place",
+            "title": "Suburb"
+          },
+          {
+            "field": "what",
+            "title": "Measure"
+          },
+          {
+            "field": "share",
+            "title": "Share (%)",
+            "format": ".1f"
+          },
+          {
+            "field": "records",
+            "title": "Bird records (2024)",
+            "format": ","
+          },
+          {
+            "field": "tree_cover_pct",
+            "title": "Ground covered by trees (%)",
+            "format": ".1f"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    }
+  }
+}
