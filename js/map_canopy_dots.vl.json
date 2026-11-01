@@ -2,23 +2,27 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
     "text": "Do birdwatchers follow the trees?",
-    "subtitle": [
-      "Each dot is one iNaturalist bird record in the City of",
-      "Melbourne, 2024; green squares show tree cover in 2021",
-      "Trees cover 11% of the City, but more than a quarter of the",
-      "records (29%) were made under a tree",
-      "iNaturalist only: it is the one source that records where",
-      "each bird was seen, to about 10 m"
-    ],
     "anchor": "start",
-    "fontSize": 12,
-    "subtitleFontSize": 10
+    "fontSize": 22,
+    "offset": {
+      "expr": "width >= 575 ? 90 : 126"
+    }
   },
   "width": "container",
-  "height": 430,
+  "height": 660,
   "projection": {
     "type": "mercator"
   },
+  "params": [
+    {
+      "name": "show",
+      "value": 1
+    },
+    {
+      "name": "mode",
+      "value": 1
+    }
+  ],
   "layer": [
     {
       "data": {
@@ -30,7 +34,7 @@
       },
       "mark": {
         "type": "geoshape",
-        "fill": "#f1f1ed",
+        "fill": "#e9dfcd",
         "stroke": null
       }
     },
@@ -48,6 +52,9 @@
       },
       "transform": [
         {
+          "filter": "mode != 2"
+        },
+        {
           "calculate": "datum.lon + 0.0006",
           "as": "lon2"
         },
@@ -58,10 +65,17 @@
         {
           "calculate": "datum.tree_pct < 10 ? 'Under 10%' : datum.tree_pct < 25 ? '10 to 25%' : datum.tree_pct < 50 ? '25 to 50%' : '50% or more'",
           "as": "tree_band"
+        },
+        {
+          "calculate": "datum.tree_pct + '% of this square (about 50 m across)'",
+          "as": "tree_text"
         }
       ],
       "mark": {
-        "type": "rect"
+        "type": "rect",
+        "opacity": {
+          "expr": "clamp(2 - show, 0, 1)"
+        }
       },
       "encoding": {
         "longitude": {
@@ -83,36 +97,34 @@
           "type": "ordinal",
           "scale": {
             "domain": [
-              "No trees",
               "Under 10%",
               "10 to 25%",
               "25 to 50%",
               "50% or more"
             ],
             "range": [
-              "#f1f1ed",
-              "#d9efd3",
-              "#a8d99c",
-              "#5fb365",
-              "#21823f"
+              "#dfe5c3",
+              "#b5d59c",
+              "#7fb96c",
+              "#3f8f43"
             ]
           },
           "legend": {
             "title": "Ground covered by trees",
-            "orient": "bottom",
+            "orient": "none",
+            "legendX": 0,
+            "legendY": -78,
+            "direction": "horizontal",
             "symbolType": "square",
             "symbolSize": 160,
-            "symbolStrokeColor": "#cccccc",
             "labelFontSize": 11,
-            "titleLimit": 300,
-            "direction": "horizontal",
-            "columns": 3
+            "titleLimit": 300
           }
         },
         "tooltip": [
           {
-            "field": "tree_pct",
-            "title": "Ground covered by trees (%)"
+            "field": "tree_text",
+            "title": "Trees cover"
           }
         ]
       }
@@ -128,8 +140,8 @@
       "mark": {
         "type": "geoshape",
         "filled": false,
-        "stroke": "#8a8a8a",
-        "strokeWidth": 0.7
+        "stroke": "black",
+        "strokeWidth": 1
       }
     },
     {
@@ -146,15 +158,26 @@
       },
       "transform": [
         {
+          "filter": "mode != 0"
+        },
+        {
           "calculate": "datum.under_trees == 1 ? 'Yes' : 'No'",
           "as": "under_label"
+        },
+        {
+          "calculate": "substring(datum.date, 8, 10) + '-' + substring(datum.date, 5, 7) + '-' + substring(datum.date, 0, 4)",
+          "as": "date_dmy"
         }
       ],
       "mark": {
-        "type": "circle",
-        "size": 9,
-        "color": "#d94801",
-        "opacity": 0.75
+        "type": "point",
+        "filled": true,
+        "strokeWidth": 0,
+        "color": "#343065",
+        "size": 14,
+        "opacity": {
+          "expr": "0.7 * clamp(show, 0, 1)"
+        }
       },
       "encoding": {
         "longitude": {
@@ -165,18 +188,38 @@
           "field": "lat",
           "type": "quantitative"
         },
+        "shape": {
+          "datum": "One bird record",
+          "scale": {
+            "range": [
+              "circle"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "none",
+            "legendX": 390,
+            "legendY": -62,
+            "symbolFillColor": "#343065",
+            "symbolStrokeWidth": 0,
+            "symbolOpacity": 0.7,
+            "symbolSize": 40,
+            "labelFontSize": 11,
+            "labelLimit": 320
+          }
+        },
         "tooltip": [
           {
             "field": "bird",
             "title": "Bird"
           },
           {
-            "field": "date",
+            "field": "date_dmy",
             "title": "Date"
           },
           {
             "field": "under_label",
-            "title": "Under a tree?"
+            "title": "Made under a tree"
           }
         ]
       }
@@ -191,10 +234,10 @@
       },
       "mark": {
         "type": "text",
-        "fontSize": 10,
+        "fontSize": 11,
         "fontWeight": "bold",
-        "color": "white",
-        "stroke": "white",
+        "color": "#fbf3e6",
+        "stroke": "#fbf3e6",
         "strokeWidth": 3,
         "opacity": 0.85,
         "lineBreak": "\n"
@@ -214,7 +257,10 @@
       },
       "transform": [
         {
-          "calculate": "datum.properties.suburb == 'South Wharf' ? 'South\\nWharf' : datum.properties.suburb",
+          "filter": "indexof(['Parkville','Carlton','Melbourne','East Melbourne','Port Melbourne'], datum.properties.suburb) >= 0"
+        },
+        {
+          "calculate": "datum.properties.suburb",
           "as": "label"
         }
       ]
@@ -229,9 +275,9 @@
       },
       "mark": {
         "type": "text",
-        "fontSize": 10,
+        "fontSize": 11,
         "fontWeight": "bold",
-        "color": "#4d4d4d",
+        "color": "black",
         "lineBreak": "\n"
       },
       "encoding": {
@@ -249,15 +295,45 @@
       },
       "transform": [
         {
-          "calculate": "datum.properties.suburb == 'South Wharf' ? 'South\\nWharf' : datum.properties.suburb",
+          "filter": "indexof(['Parkville','Carlton','Melbourne','East Melbourne','Port Melbourne'], datum.properties.suburb) >= 0"
+        },
+        {
+          "calculate": "datum.properties.suburb",
           "as": "label"
         }
       ]
     }
   ],
   "config": {
+    "background": null,
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
   }
 }

@@ -2,14 +2,10 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
     "text": "Birds don't keep office hours, but birdwatchers do",
-    "subtitle": [
-      "iNaturalist bird records in Greater Melbourne by day and hour, 2024",
-      "An average weekend day has nearly a quarter more records than a weekday; almost none are made before 7am",
-      "The Monday lunchtime hot spot is mostly one keen person: 421 of its 987 records"
-    ],
-    "anchor": "start"
+    "anchor": "start",
+    "fontSize": 22
   },
-  "width": 560,
+  "width": "container",
   "height": 210,
   "data": {
     "url": "data/inat_weekday_hour_2024.csv",
@@ -24,7 +20,7 @@
   },
   "mark": {
     "type": "rect",
-    "stroke": "white",
+    "stroke": "#fbf3e6",
     "strokeWidth": 1
   },
   "encoding": {
@@ -46,7 +42,9 @@
         ],
         "labelExpr": "datum.value == 0 ? '12am' : datum.value < 12 ? datum.value + 'am' : datum.value == 12 ? '12pm' : (datum.value - 12) + 'pm'",
         "ticks": false,
-        "domain": false
+        "domain": false,
+        "labelFontSize": 14,
+        "labelPadding": 8
       }
     },
     "y": {
@@ -72,34 +70,92 @@
       "field": "records",
       "type": "quantitative",
       "scale": {
-        "scheme": "greens"
+        "domain": [
+          0,
+          1000
+        ],
+        "range": [
+          "#e2e0f5",
+          "#000c44"
+        ]
       },
       "legend": {
         "title": "Records",
         "orient": "right",
         "format": ",d",
+        "values": [
+          0,
+          1000
+        ],
         "gradientLength": 160
       }
     },
     "tooltip": [
       {
-        "field": "weekday",
-        "title": "Day"
-      },
-      {
-        "field": "hour",
-        "title": "Hour starting (24h)"
+        "field": "heading",
+        "title": "title"
       },
       {
         "field": "records",
-        "title": "Records",
+        "title": "Bird records",
         "format": ","
       }
     ]
   },
   "config": {
+    "background": null,
     "view": {
       "stroke": null
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
+  },
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 5,
+    "bottom": 0
+  },
+  "transform": [
+    {
+      "calculate": "{'Mon':'Monday','Tue':'Tuesday','Wed':'Wednesday','Thu':'Thursday','Fri':'Friday','Sat':'Saturday','Sun':'Sunday'}[datum.weekday]",
+      "as": "day_name"
+    },
+    {
+      "calculate": "(datum.hour % 12 == 0 ? 12 : datum.hour % 12) + (datum.hour < 12 ? 'am' : 'pm')",
+      "as": "from_text"
+    },
+    {
+      "calculate": "((datum.hour + 1) % 12 == 0 ? 12 : (datum.hour + 1) % 12) + ((datum.hour + 1) % 24 < 12 ? 'am' : 'pm')",
+      "as": "to_text"
+    },
+    {
+      "calculate": "datum.day_name + ', ' + datum.from_text + ' to ' + datum.to_text",
+      "as": "heading"
     }
-  }
+  ]
 }

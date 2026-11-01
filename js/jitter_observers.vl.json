@@ -2,14 +2,12 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
     "text": "A few keen people make most of the records",
-    "subtitle": [
-      "Each dot is one iNaturalist user who recorded birds in Greater Melbourne in 2024 (2,509 people)",
-      "The most active 1% (25 people) made 45% of all records; 972 people made just one"
-    ],
-    "anchor": "start"
+    "anchor": "start",
+    "fontSize": 22,
+    "offset": 30
   },
-  "width": 600,
-  "height": 230,
+  "width": "container",
+  "height": 300,
   "data": {
     "url": "data/inat_observer_records_2024.csv",
     "format": {
@@ -30,37 +28,59 @@
       "mark": {
         "type": "circle",
         "size": 18,
-        "opacity": 0.35,
-        "color": "#238b45"
+        "opacity": 0.65
       },
       "encoding": {
+        "color": {
+          "datum": "One dot = one person",
+          "scale": {
+            "range": [
+              "#343065"
+            ]
+          },
+          "legend": {
+            "title": null,
+            "orient": "none",
+            "symbolType": "circle",
+            "symbolSize": 60,
+            "symbolOpacity": 0.65,
+            "labelFontSize": 12,
+            "legendX": 0,
+            "legendY": -48
+          }
+        },
         "tooltip": [
           {
+            "field": "heading",
+            "title": "title"
+          },
+          {
             "field": "records",
-            "title": "Records by this person",
+            "title": "Bird records in 2024",
             "format": ","
           }
         ]
-      }
+      },
+      "transform": [
+        {
+          "calculate": "'One iNaturalist user'",
+          "as": "heading"
+        }
+      ]
     },
     {
       "data": {
         "values": [
           {
-            "records": 1,
-            "jitter": 1.03,
-            "jitter2": 1.22
-          },
-          {
             "records": 4246,
-            "jitter": 0.56,
-            "jitter2": 1.22
+            "jitter": 0.53,
+            "jitter2": 1.08
           }
         ]
       },
       "mark": {
         "type": "rule",
-        "color": "#666",
+        "color": "#6b5a48",
         "strokeWidth": 0.8
       },
       "encoding": {
@@ -73,22 +93,76 @@
       "data": {
         "values": [
           {
-            "records": 1,
-            "jitter": 1.25,
-            "text": "972 people made\njust one record"
+            "px": 0,
+            "py": -3,
+            "step": 1
+          },
+          {
+            "px": 0,
+            "py": -22,
+            "step": 2
+          },
+          {
+            "px": 165,
+            "py": -22,
+            "step": 3
+          },
+          {
+            "px": 165,
+            "py": -35,
+            "step": 4
+          }
+        ]
+      },
+      "mark": {
+        "type": "line",
+        "color": "#6b5a48",
+        "strokeWidth": 0.8
+      },
+      "encoding": {
+        "x": {
+          "field": "px",
+          "type": "quantitative",
+          "scale": null
+        },
+        "y": {
+          "field": "py",
+          "type": "quantitative",
+          "scale": null
+        },
+        "order": {
+          "field": "step"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "px": 158,
+            "py": -43,
+            "text": "972 people made just one record"
           }
         ]
       },
       "mark": {
         "type": "text",
-        "baseline": "bottom",
+        "baseline": "middle",
         "fontSize": 11,
-        "color": "#222",
-        "lineBreak": "\n",
-        "align": "left",
-        "dx": -2
+        "color": "black",
+        "align": "left"
       },
       "encoding": {
+        "x": {
+          "field": "px",
+          "type": "quantitative",
+          "scale": null
+        },
+        "y": {
+          "field": "py",
+          "type": "quantitative",
+          "scale": null
+        },
         "text": {
           "field": "text"
         }
@@ -99,16 +173,16 @@
         "values": [
           {
             "records": 4246,
-            "jitter": 1.25,
+            "jitter": 1.156,
             "text": "One person: 4,246 records,\nabout 1 in 10 iNaturalist records"
           }
         ]
       },
       "mark": {
         "type": "text",
-        "baseline": "bottom",
+        "baseline": "middle",
         "fontSize": 11,
-        "color": "#222",
+        "color": "black",
         "lineBreak": "\n",
         "align": "right",
         "dx": 4
@@ -121,9 +195,36 @@
     }
   ],
   "config": {
+    "background": null,
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
   },
   "encoding": {
     "x": {
@@ -137,7 +238,9 @@
         ]
       },
       "axis": {
-        "title": "Bird records made by one person in 2024 (each gridline is 10 times the one before)",
+        "title": "Bird records",
+        "titleFontSize": 14,
+        "titlePadding": 8,
         "values": [
           1,
           10,
@@ -146,11 +249,12 @@
         ],
         "format": ",d",
         "grid": true,
-        "gridColor": "#e6e6e6",
+        "gridColor": "#e8d9c3",
         "domain": false,
         "ticks": false,
-        "labelFontSize": 11,
-        "titleLimit": 600
+        "labelFontSize": 14,
+        "titleLimit": 600,
+        "labelPadding": 8
       }
     },
     "y": {
@@ -159,10 +263,16 @@
       "axis": null,
       "scale": {
         "domain": [
-          -0.08,
-          1.55
+          -0.01,
+          1.01
         ]
       }
     }
+  },
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 5,
+    "bottom": 0
   }
 }

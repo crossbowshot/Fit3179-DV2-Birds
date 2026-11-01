@@ -2,12 +2,8 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
     "text": "Most reported or most numerous? It depends how you count",
-    "subtitle": [
-      "Rank of each species by number of records (left) and by number of birds counted (right), Greater Melbourne, 2024",
-      "Backyard birds are reported most often; waterbirds in big flocks dominate the headcount",
-      "Ranks below 30 (Grey Teal, Australian Shelduck) are squeezed in at the bottom to fit"
-    ],
-    "anchor": "start"
+    "anchor": "start",
+    "fontSize": 22
   },
   "width": 300,
   "height": 470,
@@ -92,9 +88,9 @@
           "Same rank both ways"
         ],
         "range": [
-          "#E69F00",
-          "#0072B2",
-          "#999999"
+          "#a1221b",
+          "#0b5f99",
+          "#6b5a48"
         ]
       },
       "legend": {
@@ -143,7 +139,7 @@
           "field": "label"
         },
         "color": {
-          "value": "#222"
+          "value": "black"
         }
       }
     },
@@ -164,14 +160,41 @@
           "field": "label"
         },
         "color": {
-          "value": "#222"
+          "value": "black"
         }
       }
     }
   ],
   "config": {
+    "background": "#fbf3e6",
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
   }
 }

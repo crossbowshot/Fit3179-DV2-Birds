@@ -1,22 +1,826 @@
+:root {
+  --sky: #facc97;      /* peach: the top edge of the photo, used for the title page */
+  --night: #dda66a;    /* gold: the bottom edge of the photo */
+  --paper: #fbf3e6;    /* light cream: background for the data visualisations */
+}
+
 body {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 24px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  background: var(--paper);
+  font-family: "Inter", system-ui, sans-serif;
 }
 
-h1 {
+/* headings: Fraunces (chart titles use it too, set in each spec's config.title) */
+h1, h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+}
+
+/* title page: light blue, exactly one screen tall, title in the middle */
+.title-page {
+  height: 100vh;
+  background: var(--sky);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
   text-align: center;
+  position: relative;
 }
 
-/* three equal columns */
-.columns {
+/* the cover title: big, scaling with the window (56px on a phone up to 120px on a wide screen) */
+h1 {
+  margin: 0;
+  font-size: clamp(56px, 10vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-align: center;
+  color: black;
+}
+
+.title-byline {
+  margin: 28px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: black;
+}
+
+/* "Scroll" with an arrow that bobs gently, at the bottom of the cover */
+.scroll-cue {
+  position: absolute;
+  bottom: 28px;
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.scroll-cue span {
+  font-size: 18px;
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue span { animation: none; }
+}
+
+/* the photo, full width. Behind it the background goes from peach (top half) to gold (bottom half),
+   and the photo's top and bottom edges fade out, so it blends into both */
+.hero-photo {
+  background: linear-gradient(to bottom, var(--sky) 50%, var(--night) 50%);
+  line-height: 0;
+}
+
+.hero-photo img {
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 85%, transparent 100%);
+}
+
+/* a band below the photo that fades from the photo's gold into the cream */
+.fade-to-paper {
+  height: 240px;
+  background: linear-gradient(to bottom, var(--night), var(--paper));
+}
+
+/* the data visualisations, on cream: one column down the middle */
+.content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  color: black;
+}
+
+/* intro text */
+.intro {
+  font-size: 20px;
+  max-width: 29em;   /* narrower paragraph: about 11-12 words per line */
+  line-height: 2;
+  color: black;
+}
+
+/* everything stacked in one column, with space between each chart */
+.stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 64px;
+}
+
+/* below the suburbs map: left column 40% (text), right column 60% (charts) */
+.split {
+  --split-bg: #cdc9e8;   /* purple, a step darker than the lightest colour of the states and suburbs maps */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);   /* text a third, charts two thirds */
+  column-gap: 32px;
+  row-gap: 64px;
+  padding: 48px 0;
+  /* wider than the 860px column: up to 1240px, but always at least 32px from the window edges */
+  margin-inline: calc(50% - min(620px, 50vw - 32px));
+  background: var(--split-bg);
+  /* stretch the purple out to both edges of the window, while the content stays in the column */
+  box-shadow: 0 0 0 100vmax var(--split-bg);
+  clip-path: inset(0 -100vmax);
+  position: relative;
+}
+
+/* black lines where the purple meets the cream, above and below, across the whole window */
+.split::before,
+.split::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 8px;
+  /* the line is painted 100vmax past both sides with border-image, which (unlike a wider element)
+     doesn't make the page wider, so there is no sideways scrolling */
+  border-image: linear-gradient(black, black) fill 0 / 0 / 0 100vmax;
+}
+
+.split::before {
+  top: 0;
+}
+
+.split::after {
+  bottom: 0;
+}
+
+/* the paragraphs beside the first three charts */
+.magpie-text {
+  font-size: 16px;
+  margin: 0;
+  color: black;
+  text-align: left;
+  line-height: 1.8;
+}
+
+/* bird names in the text, underlined in the colour of their season in the seasons chart (the text stays black:
+   the autumn orange and spring green are too light to read as text on the purple) */
+.season {
+  font-weight: 700;
+  text-decoration: underline 4px;
+  text-underline-offset: 4px;
+}
+.season.summer { text-decoration-color: #c23b0e; }
+.season.autumn { text-decoration-color: #e69f00; }
+.season.winter { text-decoration-color: #0b5f99; }
+.season.spring { text-decoration-color: #009e73; }
+
+/* the charts always go in the right column */
+.split > .card {
+  grid-column: 2;
+}
+
+/* left column: a section title that sticks near the top of the screen while the section's charts scroll past
+   (grid-row set in index.html) */
+.text-track {
+  grid-column: 1;
+}
+
+.text-sticky {
+  position: sticky;
+  top: 24px;
+  container-type: inline-size;   /* lets the title below size itself to this column's width (cqi units) */
+}
+
+/* these titles always fit on one line: 28px, or smaller if the column is too narrow for that. The longest,
+   "What else impacts bird observations?", is about 18 times as wide as its font size in Fraunces,
+   so 100cqi / 18 = 5.5cqi. All three use the same rule so they come out the same size */
+.text-sticky .section-title {
+  white-space: nowrap;
+  font-size: min(28px, 5.5cqi);
+}
+
+/* one paragraph per chart, in the chart's own row (left column). Its text sticks just under the section title
+   while the chart scrolls past; the script in index.html fades it out before the chart's end pushes it up */
+.chart-text {
+  grid-column: 1;
+}
+
+/* the first paragraph of a section starts below the title, which sits at the top of the same row */
+.chart-text.first {
+  padding-top: 76px;
+}
+
+.chart-text-sticky {
+  position: sticky;
+  top: 100px;   /* the title's 24px + its height (about 60px) + a gap */
+  transition: opacity 0.15s;
+}
+
+/* titles and text in the left column of the purple section (same look as the magpie title and text) */
+.section-title {
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid black;
+  font-size: 28px;
+  line-height: 1.2;
+  color: black;
+}
+
+.section-text {
+  font-size: 16px;
+  line-height: 2;   /* double spaced */
+  margin: 0;
+  color: black;
+}
+
+/* a gap between paragraphs that follow each other */
+.section-text + .section-text {
+  margin-top: 12px;
+}
+
+/* highlighted tip box (e.g. how to use a chart's slider): rounded, cream on the purple, purple label */
+.tip-box {
+  margin-top: 20px;
+  /* square left side with a purple accent bar, rounded on the right; both edges line up with the column
+     (the title's line and the text above) */
+  padding: 14px 18px 14px 12px;
+  border-radius: 0 14px 14px 0;
+  background: #fbf3e6;
+  border: 2px solid #5e5887;
+  border-left: 4px solid #5e5887;   /* purple accent bar down the square left side */
+  font-size: 15px;
+  line-height: 1.6;
+  color: black;
+}
+
+/* the states map's tip box sits above the bird photo, in the photo card's smaller text */
+.state-bird .tip-box {
+  margin: 0 0 12px;
+  padding: 10px 12px 10px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.tip-label {
+  font-weight: 700;
+  color: #5e5887;
+}
+
+/* each chart in the purple section sits in its own soft-edged box */
+.card {
+  background: #fbf3e6;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(43, 33, 24, 0.10);
+}
+
+/* text under a chart, inside its box */
+.chart-note {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 12px 0 0;
+  color: black;
+}
+
+/* the bird photo sits in the empty sea at the top right of the states map,
+   so it can be seen while the mouse is on the map */
+.map-with-photo {
+  position: relative;
+}
+
+.state-bird {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 220px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.state-bird img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border: 2px solid black;
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+
+.state-bird figcaption p {
+  margin: 8px 0 0;
+}
+
+/* a few lines about the bird */
+.state-bird .bird-info {
+  line-height: 1.5;
+}
+
+.state-bird .credit {
+  font-size: 11px;
+  color: black;
+}
+
+/* on narrow screens the map fills the width, so the photo goes underneath it instead */
+@media (max-width: 900px) {
+  .state-bird {
+    position: static;
+    width: auto;
+    max-width: 320px;
+    margin-top: 16px;
+  }
+}
+
+/* magnifying lens over the suburbs map (drawn by the script in index.html) */
+#map_suburbs {
+  position: relative;
+}
+
+.lens {
+  position: absolute;
+  display: none;
+  pointer-events: none;   /* the mouse goes through the lens to the map, so tooltips still work */
+  border-radius: 50%;
+  border: 2px solid black;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 5;
+}
+
+/* the on/off button: top right of the suburbs map, level with its title */
+.map-with-lens {
+  position: relative;
+}
+
+/* the button and its note, at the right of the map, just below the title and subtitle (which span the full width) */
+.map-tools {
+  position: absolute;
+  top: 56px;   /* just under the subtitle */
+  right: 0;
+  z-index: 6;
+  /* the button and the "How to read" box stack, both 220px wide: the same width as the bird photo card above
+     (.state-bird) and pinned to the same right edge, so all their edges line up */
+  display: grid;
+  width: 220px;
+}
+
+.map-note {
+  width: 0;          /* the box doesn't set the group's width... */
+  min-width: 100%;   /* ...it just fills the button's width */
+  box-sizing: border-box;
+  margin: 14px 0 0;   /* space between the button and the box */
+  padding: 10px 14px 10px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* the two notes in the box: no outer margins, a small gap between them */
+.map-note p {
+  margin: 0;
+}
+
+.map-note p + p {
+  margin-top: 8px;
+}
+
+.lens-toggle {
+  white-space: nowrap;
+  font: inherit;
+  font-size: 15px;
+  padding: 9px 20px;
+  border: 2px solid black;
+  border-radius: 999px;
+  background: #fbf3e6;
+  color: black;
+  cursor: pointer;
+}
+
+.lens-toggle[aria-pressed="true"] {
+  background: black;
+  color: #fbf3e6;
+}
+
+/* the buttons fade between their light and dark looks */
+.lens-toggle {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* "Reset view" turns dark for a moment when pressed, like a switched-on magnifying glass button */
+.lens-toggle.flash {
+  background: black;
+  color: #fbf3e6;
+}
+
+/* the tilted spike map: magnifying glass button and the Spin / Tilt sliders in a row above the map */
+.spike-map {
+  position: relative;
+}
+
+#map_spikes {
+  position: relative;
+}
+
+/* dragging the map spins and tilts it: no text selection and no page scrolling on touch screens.
+   The normal arrow cursor everywhere (Vega would otherwise show a hand over the spikes, as they have tooltips) */
+#map_spikes canvas {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default !important;
+  touch-action: none;
+}
+
+/* top right of the map, level with the top of the title: the button, with the Spin and Tilt sliders stacked
+   under it, all 220px wide */
+.spike-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 6;
+  width: 220px;
+  display: grid;
+  gap: 10px;
+}
+
+#spike_controls .vega-bindings,
+#spike_controls {
+  display: grid;
+  gap: 6px;
+  font-size: 15px;
+}
+
+/* each slider: its name in a fixed-width column on the left, the slider filling the rest */
+#spike_controls label {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  align-items: center;
+}
+
+/* the sliders: same look as the canopy map's slider (light purple track, dark purple round thumb with a cream ring) */
+#spike_controls input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  border-radius: 2px;
+  background: #cdc9e8;
+  cursor: pointer;
+}
+
+#spike_controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #343065;
+  border: 2px solid #fbf3e6;
+  box-shadow: 0 0 0 1px #343065;
+}
+
+#spike_controls input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #343065;
+  border: 2px solid #fbf3e6;
+}
+
+/* slider names */
+#spike_controls .vega-bind-name {
+  font-size: 14px;
+  color: black;
+}
+
+/* the spike map's Interactivity note: top left, under the title and subtitle, lined up with the title's left edge */
+.spike-note {
+  position: absolute;
+  top: 72px;
+  left: 5px;
+  z-index: 6;
+  width: 300px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px 14px 10px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.spike-note p {
+  margin: 0;
+}
+
+/* narrow windows: not enough room beside the title, so the controls sit in a row above the map instead */
+@media (max-width: 900px) {
+  .spike-controls {
+    position: static;
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    margin-bottom: 12px;
+  }
+
+  #spike_controls label {
+    grid-template-columns: 44px 140px;
+  }
+
+  /* the note goes back into the normal flow, under the controls row */
+  .spike-note {
+    position: static;
+    width: auto;
+    max-width: 420px;
+    margin: 0 0 12px;
+  }
+}
+
+
+/* hide the number Vega prints next to each slider (it shows long decimals after a drag) */
+#spike_controls input + span {
+  display: none;
+}
+
+/* every tooltip (#vg-tooltip-element is the one box all the charts share). The selectors repeat the id so they
+   beat the tooltip's own built-in rules. Heading = the tooltip entry titled "title" in each spec (the bird, suburb
+   or state); below it, label and value rows, both left-aligned */
+#vg-tooltip-element.vg-tooltip {
+  border-radius: 10px;
+  border: none;
+  padding: 10px 14px;
+  background: #e2e0f5;   /* the light purple of the stat boxes and the chart section */
+  box-shadow: 0 4px 14px rgba(52, 48, 101, 0.18);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: black;
+  max-width: 340px;
+}
+
+#vg-tooltip-element.vg-tooltip h2 {
+  margin: 0 0 6px;
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+#vg-tooltip-element table tr td.key {
+  text-align: left;
+  font-weight: 400;
+  color: black;   /* labels normal weight, values bold */
+  padding: 1px 12px 1px 0;
+  max-width: 200px;
+  white-space: normal;
+  vertical-align: top;
+}
+
+#vg-tooltip-element table tr td.value {
+  text-align: left;
+  font-weight: 600;
+  padding: 1px 0;
+  vertical-align: top;
+}
+
+/* the "Show: Tree cover / Bird records / Both" buttons Vega-Lite adds under the canopy map */
+.vega-bindings {
+  margin-top: 10px;
+  font-size: 13px;
+  color: black;
+}
+
+.vega-bindings label {
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.vega-bindings input[type="radio"] {
+  accent-color: #343065;
+}
+
+/* the canopy map's slider (made by Vega-Lite inside #canopy_control): full width, snaps to 3 positions */
+.slider-control {
+  --thumb: 14px;
+  position: absolute;   /* right side of the canopy map's box, in the gap under the title (title.offset in the spec) */
+  top: 62px;
+  right: 20px;
+  width: 200px;
+  z-index: 2;
+}
+
+/* the box the slider is pinned to */
+.card:has(.slider-control) {
+  position: relative;
+  container-type: inline-size;   /* lets the slider check how wide this card is (below) */
+}
+
+/* wide enough for the title (359px) and the slider (200px) side by side: slider at the top right, on the
+   title's line. Narrower cards keep it under the title (the spec's title.offset leaves a gap for it) */
+@container (min-width: 625px) {
+  .slider-control {
+    top: 24px;
+  }
+}
+
+#canopy_control label {
+  display: block;
+}
+
+/* hide Vega's "Show" name and the 0 / 1 / 2 number; the labels underneath say what each position is */
+#canopy_control .vega-bind-name,
+#canopy_control label > span:last-child {
+  display: none;
+}
+
+#canopy_control input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  border-radius: 2px;
+  background: #cdc9e8;
+  cursor: pointer;
+}
+
+#canopy_control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 50%;
+  background: #343065;
+  border: 2px solid #fbf3e6;
+  box-shadow: 0 0 0 1px #343065;
+}
+
+#canopy_control input[type="range"]::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border-radius: 50%;
+  background: #343065;
+  border: 2px solid #fbf3e6;
+}
+
+/* the three labels sit under the three snap points (the thumb's centre stops half a thumb from each end) */
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 0 calc(var(--thumb) / 2);
+  font-size: 11px;
+  color: black;
+}
+
+.slider-labels span {
+  width: 0;
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.slider-labels span:first-child {
+  justify-content: flex-start;
+}
+
+.slider-labels span:last-child {
+  justify-content: flex-end;
+}
+
+/* the three pictures of the canopy map that are cross-faded while the slider is dragged */
+#map_canopy_dots {
+  position: relative;
+}
+
+.map-shots {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+}
+
+.map-shots canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* closing text after the last chart ("Your turn"): same look as the intro, title with a line under it like the
+   section titles */
+.outro h2 {
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid black;
+  font-size: 40px;
+  line-height: 1.2;
+  max-width: 580px;   /* same width as the paragraph under it (29em at 20px) */
+}
+
+.outro .intro {
+  margin: 0;
+}
+
+/* same width as the purple section above, so the title and text line up with its left column of text.
+   The four number boxes sit in one row underneath the text */
+.outro {
+  margin-inline: calc(50% - min(620px, 50vw - 32px));
+  display: grid;
+  row-gap: 40px;
+}
+
+/* four headline numbers in rounded boxes, side by side */
+.stat-boxes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.stat-box {
+  background: #e2e0f5;   /* the lightest purple of the maps */
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-number {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.1;
+  color: #343065;
+}
+
+.stat-label {
+  font-size: 16px;
+  line-height: 1.4;
+  color: black;
+}
+
+/* narrow windows: two boxes per row */
+@media (max-width: 900px) {
+  .stat-boxes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+
+/* citations, notes and credits at the bottom of the page: cream, three columns */
+.sources {
+  border-top: 3px solid black;   /* thinner than the 8px lines around the purple section */
+  background: #fbf3e6;
+  color: black;
+  padding: 56px 24px 72px;
+}
+
+.sources-grid {
+  max-width: 1240px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px;
+  gap: 48px;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
-/* a box that takes up two columns instead of one */
-.span-2 {
-  grid-column: span 2;
+.sources h3 {
+  margin: 0 0 16px;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #343065;
+}
+
+.sources ol,
+.sources ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.sources li {
+  margin-bottom: 10px;
+}
+
+.sources p {
+  margin: 0 0 14px;
+}
+
+.sources a {
+  color: black;
+}
+
+/* one column on narrow screens */
+@media (max-width: 900px) {
+  .sources-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* vega-embed puts an empty form (for chart controls) under every chart, with a 10px top margin: hide it
+   when it has nothing in it, so there's no extra gap at the bottom of the chart cards */
+.vega-bindings:empty {
+  display: none;
 }

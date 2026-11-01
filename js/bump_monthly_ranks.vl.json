@@ -1,16 +1,9 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
-    "text": "The everyday birds swap places through the year",
-    "subtitle": [
-      "How Greater Melbourne's 10 most reported birds of 2024",
-      "rank against each other each month (1 = most reported)",
-      "The Australian Magpie is first every month. Common Mynas",
-      "swing from 10th in April to 2nd in December, Red Wattlebirds",
-      "climb from 9th to 4th, and Welcome Swallows move between",
-      "last and 7th"
-    ],
-    "anchor": "start"
+    "text": "How do the bird rankings change over the months?",
+    "anchor": "start",
+    "fontSize": 22
   },
   "width": "container",
   "height": 300,
@@ -32,7 +25,7 @@
       "as": "rank_all_label"
     },
     {
-      "calculate": "indexof(['Welcome Swallow', 'Common Myna', 'Red Wattlebird'], datum.species) >= 0 ? datum.species : 'Other'",
+      "calculate": "indexof(['Little Raven', 'Common Myna', 'Red Wattlebird'], datum.species) >= 0 ? datum.species : 'Other'",
       "as": "highlight"
     },
     {
@@ -70,7 +63,10 @@
         "labelExpr": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][datum.value - 1]",
         "grid": false,
         "domain": false,
-        "ticks": false
+        "ticks": false,
+        "labelFontSize": 14,
+        "labelPadding": 8,
+        "labelFlush": false
       }
     },
     "y": {
@@ -85,7 +81,7 @@
         "nice": false
       },
       "axis": {
-        "title": "Rank that month",
+        "title": null,
         "values": [
           1,
           2,
@@ -99,9 +95,11 @@
           10
         ],
         "grid": true,
-        "gridColor": "#eeeeee",
+        "gridColor": "#e8d9c3",
         "domain": false,
-        "ticks": false
+        "ticks": false,
+        "labelPadding": 120,
+        "labelFontSize": 14
       }
     },
     "color": {
@@ -109,16 +107,16 @@
       "type": "nominal",
       "scale": {
         "domain": [
-          "Welcome Swallow",
+          "Little Raven",
           "Common Myna",
           "Red Wattlebird",
           "Other"
         ],
         "range": [
-          "#0072B2",
-          "#D55E00",
-          "#CC79A7",
-          "#c8c8c8"
+          "#0b5f99",
+          "#c23b0e",
+          "#009e73",
+          "#b8b8b8"
         ]
       },
       "legend": null
@@ -153,26 +151,18 @@
     {
       "mark": {
         "type": "circle",
-        "size": 45,
+        "size": 90,
         "opacity": 1
       },
       "encoding": {
         "tooltip": [
           {
-            "field": "species",
-            "title": "Bird"
-          },
-          {
-            "field": "month_name",
-            "title": "Month"
-          },
-          {
-            "field": "rank",
-            "title": "Rank among these 10"
+            "field": "heading",
+            "title": "title"
           },
           {
             "field": "rank_all_label",
-            "title": "Rank among all birds that month"
+            "title": "Rank among all birds"
           },
           {
             "field": "records",
@@ -180,6 +170,33 @@
             "format": ","
           }
         ]
+      },
+      "transform": [
+        {
+          "calculate": "datum.species + ', ' + datum.month_name",
+          "as": "heading"
+        }
+      ]
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.month == 1"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "right",
+        "dx": -11,
+        "fontSize": 11
+      },
+      "encoding": {
+        "text": {
+          "field": "species"
+        },
+        "color": {
+          "value": "black"
+        }
       }
     },
     {
@@ -191,7 +208,7 @@
       "mark": {
         "type": "text",
         "align": "left",
-        "dx": 9,
+        "dx": 11,
         "fontSize": 11
       },
       "encoding": {
@@ -201,16 +218,49 @@
         "color": {
           "condition": {
             "test": "datum.highlight != 'Other'",
-            "value": "#222222"
+            "value": "black"
           },
-          "value": "#8c8c8c"
+          "value": "black"
         }
       }
     }
   ],
   "config": {
+    "background": null,
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
+  },
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 5,
+    "bottom": 0
   }
 }

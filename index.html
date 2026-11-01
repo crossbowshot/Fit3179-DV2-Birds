@@ -3,53 +3,568 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Birds in our back yards</title>
+  <title>The Birds We See</title>
+  <!-- Google Fonts: a font must be loaded here before the page or the charts can use it -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fraunces for headings and chart titles, Inter for all other text -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="css/style.css">
+  <!-- d3-geo: only for the custom "tilted" map projection used by the tilted spike map (registered in the script below) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3-array@3.2.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-geo@3.1.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega@6"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-lite@6"></script>
   <script src="https://cdn.jsdelivr.net/npm/vega-embed@7"></script>
 </head>
 <body>
-  <h1>Birds in our back yards</h1>
+  <!-- title page: peach (the top edge of the photo), fills the whole screen -->
+  <header class="title-page">
+    <h1>The Birds<br>We See</h1>
+    <!-- byline: fill in your name -->
+    <p class="title-byline">By [Your name] · October 2026</p>
+    <!-- a hint that the page continues below -->
+    <p class="scroll-cue" aria-hidden="true">Scroll<span>↓</span></p>
+  </header>
 
-  <div class="columns">
-    <div class="column">
-      <p>Placeholder text.</p>
-    </div>
-    <div class="column">
-      <div id="map_states"></div>
-    </div>
-    <div class="column"></div>
-
-    <!-- second row: spans columns 1 and 2 -->
-    <div class="column span-2">
-      <div id="map_suburbs"></div>
-    </div>
-    <div class="column">
-      <div id="lollipop_species"></div>
-      <div id="bump_monthly_ranks"></div>
-    </div>
-
-    <!-- third row -->
-    <div class="column">
-      <div id="ridgeline_seasonal"></div>
-    </div>
-    <div class="column">
-      <div id="map_canopy_dots"></div>
-    </div>
-    <div class="column">
-      <div id="dotplot_canopy_records"></div>
-    </div>
+  <!-- the photo: fades in from the peach above and out into the gold below -->
+  <div class="hero-photo">
+    <img src="images/hero_sunset.jpg" alt="Birds flying over a lake at sunset, with hills behind and the sun reflected on the water">
   </div>
 
+  <!-- gold fades into cream -->
+  <div class="fade-to-paper"></div>
+
+  <!-- the data visualisations, on cream -->
+  <main class="content">
+  <!-- one column down the middle of the page -->
+  <div class="stack">
+    <p class="intro">Australia is home to over <strong>700 species of birds</strong> , of these species about <strong>350</strong> are only found in Australia,  such as the emu, noisy miner and little raven. In this data visualisation we look at the birds recorded on the Atlas of Living Australia in Victoria, mainly in Greater Melbourne. We explore where they are reported, what is reported, what affects these sightings, and who reports them.</p>
+
+    <!-- the states map with its bird photo right underneath -->
+    <div class="map-with-photo">
+    <div id="map_states"></div>
+
+    <!-- the state's most recorded bird: photo on the left, caption on the right.
+         Filled by the script at the bottom when a state on the map is hovered or tapped -->
+    <figure id="state_bird" class="state-bird">
+      <!-- highlighted tip about the states map, above the bird photo -->
+      <div class="tip-box"><span class="tip-label">Interactivity:</span> Hover over each state to see the most observed bird</div>
+      <img id="state_bird_img" alt="">
+      <figcaption>
+        <p id="state_bird_text">Hover over a state to see its most recorded bird.</p>
+        <p id="state_bird_info" class="bird-info"></p>
+        <p id="state_bird_credit" class="credit"></p>
+      </figcaption>
+    </figure>
+    </div>
+
+    <!-- text between the states map and the suburbs map (same style as the intro) -->
+    <p class="intro">We will be taking a look into birds recorded through apps such as eBird and iNaturalist, and stored on the Atlas of Living Australia. These records exist thanks to keen birdwatchers and nature lovers who note down the birds they see. So keep in mind that this is not a picture of every bird out there. Yet it is still fascinating to dive into the world of our feathered neighbours. Let’s zoom into Melbourne and see which suburbs record the most birds for their population.</p>
+
+    <!-- the suburbs map, with a button that turns the magnifying glass on and off -->
+    <div class="map-with-lens">
+      <!-- top right of the map: the magnifying glass button with a note underneath -->
+      <div class="map-tools">
+        <button id="lens_toggle" class="lens-toggle" aria-pressed="false">Magnifying glass: off</button>
+        <div class="tip-box map-note">
+          <p><span class="tip-label">Interactivity:</span> Turn on the magnifying glass to zoom in on small suburbs</p>
+          <p><span class="tip-label">How to read:</span> Grey suburbs have fewer than <strong>1,000</strong> residents</p>
+        </div>
+      </div>
+      <div id="map_suburbs"></div>
+    </div>
+
+    <!-- the tilted spike map: buttons and sliders above it, the map below (Vega puts the Spin and Tilt sliders in
+         #spike_controls). Drag the map to spin and tilt it -->
+    <div class="spike-map">
+      <div class="spike-controls">
+        <button id="spike_lens_toggle" class="lens-toggle" aria-pressed="false">Magnifying glass: off</button>
+        <button id="spike_reset" class="lens-toggle">Reset view</button>
+        <div id="spike_controls"></div>
+      </div>
+      <!-- top left, under the title and subtitle -->
+      <div class="tip-box spike-note">
+        <p><span class="tip-label">Interactivity:</span> Drag the map or use the sliders to spin and tilt it. Hover over a spike to see its suburb</p>
+      </div>
+      <div id="map_spikes"></div>
+    </div>
+
+    <!-- text between the suburbs map and the "Which birds do we record?" section (same style as the intro) -->
+    <div class="intro">
+      <p>We’ve seen <em>where</em> Melbourne’s birds get recorded. Now let’s look at <em>which</em> birds people are recording.</p>
+    </div>
+
+    <!-- below the suburbs map: two columns, 40% (left, for text) and 60% (right, the charts).
+         One row per chart, so text can sit beside the chart it describes -->
+    <div class="split">
+      <!-- left column: each section's title stays near the top of the screen while its charts scroll past.
+           Each paragraph sits in its own chart's row, so it starts beside its chart, follows it down the screen,
+           and fades out just before the next paragraph (beside the next chart) slides up to take its place
+           (script at the bottom). grid-row = the chart's row: 1 lollipop, 2 bump, 3 seasons, 4 canopy, 5 dot plot,
+           6 observers, 7 heatmap -->
+      <div class="text-track" style="grid-row: 1 / span 3">
+        <div class="text-sticky"><h2 class="section-title">Which birds do we record?</h2></div>
+      </div>
+      <div class="chart-text first" data-chart="lollipop_species" style="grid-row: 1">
+        <div class="chart-text-sticky">
+          <p class="magpie-text">Out of <strong>327</strong> different birds recorded in Melbourne, just <strong>10</strong> make up over <strong>a quarter</strong> of all records. They’re the birds we see every day: in our backyards, on our streets and in our parks. Two birds on the list aren’t even native to Australia. The Common Myna (7th), from South and Southeast Asia, and the Spotted Dove (11th), also from southern Asia, were both brought to Melbourne in the <strong>1860s</strong>.</p>
+        </div>
+      </div>
+      <div class="chart-text" data-chart="bump_monthly_ranks" style="grid-row: 2">
+        <div class="chart-text-sticky">
+          <p class="magpie-text">Follow the coloured lines: each bird is coloured by the season it ranks highest in. The <span class="season summer">Common Myna</span> peaks in summer, the <span class="season spring">Red Wattlebird</span> in spring and the <span class="season winter">Little Raven</span> in winter. Only the magpie never moves, sitting at the top all year round.</p>
+        </div>
+      </div>
+      <div class="chart-text" data-chart="ridgeline_seasonal" style="grid-row: 3">
+        <div class="chart-text-sticky">
+          <p class="magpie-text">Some of these birds travel huge distances. <span class="season summer">Latham’s Snipe</span> breeds in Japan and flies to Australia for our summer, while the <span class="season spring">Sacred Kingfisher</span> heads north for winter. Meanwhile, <span class="season autumn">robins</span> come down from the hills in autumn, and winter birds like the <span class="season winter">Powerful Owl</span> are around all year but easier to spot when the trees are bare.</p>
+        </div>
+      </div>
+      <div class="card"><div id="lollipop_species"></div></div>
+      <div class="card"><div id="bump_monthly_ranks"></div></div>
+      <div class="card"><div id="ridgeline_seasonal"></div></div>
+
+      <div class="text-track" style="grid-row: 4 / span 2">
+        <div class="text-sticky"><h2 class="section-title">What else impacts bird observations?</h2></div>
+      </div>
+      <div class="chart-text first" data-chart="map_canopy_dots" style="grid-row: 4">
+        <div class="chart-text-sticky">
+          <p class="section-text"><strong>80%</strong> of bird observations were recorded within 10 metres of a tree canopy while only <strong>48%</strong> of the city is within 10 metres of a tree</p>
+          <p class="section-text">Nearly <strong>3 in 10 records</strong> were made right under a tree, even though trees cover just <strong>11%</strong> of the city.</p>
+          <p class="section-text">The biggest circles sit on the leafiest parks: Royal Park, Carlton Gardens, Fitzroy Gardens and the Botanic Gardens</p>
+          <!-- highlighted tip about the canopy map's slider -->
+          <div class="tip-box"><span class="tip-label">Interactivity:</span> Drag the slider to see the trees on their own, the bird records on their own, or both together</div>
+        </div>
+      </div>
+      <div class="chart-text" data-chart="dotplot_canopy_records" style="grid-row: 5">
+        <div class="chart-text-sticky">
+          <p class="section-text" data-chart="dotplot_canopy_records">Most of the observations come from two big parks, Royal Park and the Botanic Gardens, which hold <strong>42%</strong> of the City’s trees but <strong>69%</strong> of its bird records. Parks offer paths, water and visitors as well as trees, so this shows where birds are noticed.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div id="map_canopy_dots"></div>
+        <!-- slider for the canopy map (top right of this box). The script at the bottom passes its value to the
+             map's "show" param. It slides smoothly, and glides to the nearest label when you let go -->
+        <div class="slider-control">
+          <div id="canopy_control"><input type="range" id="canopy_slider" min="0" max="2" step="0.01" value="1" aria-label="Show tree cover, both, or bird records"></div>
+          <div class="slider-labels"><span>Tree cover</span><span>Both</span><span>Bird records</span></div>
+        </div>
+      </div>
+
+      <div class="card"><div id="dotplot_canopy_records"></div></div>
+
+      <div class="text-track" style="grid-row: 6 / span 2">
+        <div class="text-sticky"><h2 class="section-title">Who reports the birds?</h2></div>
+      </div>
+      <div class="chart-text first" data-chart="jitter_observers" style="grid-row: 6">
+        <div class="chart-text-sticky">
+          <p class="section-text">You might expect bird records to be spread fairly evenly across the people who make them.</p>
+          <p class="section-text">They aren’t. Of the <strong>2,509</strong> people who logged birds in Melbourne on iNaturalist in 2024, just <strong>37</strong> made <strong>half</strong> of all records, and one person alone made almost <strong>1 in 10</strong>.</p>
+          <div class="tip-box"><span class="tip-label">Disclosure:</span> Uses iNaturalist only, the one source that shows who made each record.</div>
+        </div>
+      </div>
+      <div class="chart-text" data-chart="heatmap_weekday_hour" style="grid-row: 7">
+        <div class="chart-text-sticky">
+          <p class="section-text">Birds are usually most active and noisy around dawn, but almost nobody records then.</p>
+          <p class="section-text">Only <strong>1.2%</strong> of records were made before 7am, while <strong>73%</strong> were made between 9am and 5pm. Sundays were the busiest day, and an average weekend day had <strong>23%</strong> more records than a weekday.</p>
+          <p class="section-text">Although the brightest square is on Monday at noon by mostly one person: they made <strong>421</strong> of its <strong>987</strong> records.</p>
+        </div>
+      </div>
+      <div class="card"><div id="jitter_observers"></div></div>
+      <div class="card"><div id="heatmap_weekday_hour"></div></div>
+    </div>
+
+    <!-- closing text, on cream between the charts and the sources -->
+    <div class="outro">
+      <div class="outro-text">
+      <h2>Your turn</h2>
+      <p class="intro">These records are made by everyday people, and you can be one of them. Whether you’re a keen birdwatcher or just out for a stroll, log the birds you see on apps like eBird or iNaturalist. Every record helps scientists track how our birds are doing. Together, these records show which birds are becoming rarer, where they live, and how they’re shifting as our cities and climate change. The records help decide which birds need protecting and which places matter most to them. Scientists can’t be everywhere, so we need to help fill in the gaps, from backyards to suburbs that rarely get counted.</p>
+      </div>
+      <!-- four headline numbers for Greater Melbourne, 2024 (from the ALA records) -->
+      <div class="stat-boxes">
+        <div class="stat-box"><span class="stat-number">327</span><span class="stat-label">bird species recorded in Melbourne</span></div>
+        <div class="stat-box"><span class="stat-number">1,060,628</span><span class="stat-label">bird records</span></div>
+        <div class="stat-box"><span class="stat-number">199</span><span class="stat-label">species recorded in every month of the year</span></div>
+        <div class="stat-box"><span class="stat-number">2,509</span><span class="stat-label">people recording birds on iNaturalist</span></div>
+      </div>
+    </div>
+  </div>
+  </main>
+
+  <!-- citations, notes and credits (cream, three columns) -->
+  <footer class="sources">
+    <div class="sources-grid">
+      <section>
+        <h3>Data sources</h3>
+        <ol>
+          <li>Atlas of Living Australia (2026). <a href="https://doi.org/10.26197/ala.2f2e2a93-a954-4910-b216-1ecc3ce18693"><em>Occurrence download: birds, Victoria, 1 January to 31 December 2024</em></a> (2,427,834 records, "ALA General" quality filters). Records from eBird Australia (CC0), BirdLife Australia Birdata (CC BY-NC 3.0) and iNaturalist Australia.</li>
+          <li>Atlas of Living Australia. <a href="https://biocache.ala.org.au/occurrences/search?q=*%3A*&amp;fq=speciesGroup%3A%22Birds%22&amp;fq=country%3A%22Australia%22&amp;fq=basisOfRecord%3A%22HUMAN_OBSERVATION%22&amp;fq=eventDate%3A%5B2024-01-01T00%3A00%3A00Z%20TO%202024-12-31T23%3A59%3A59Z%5D&amp;qualityProfile=ALA">Bird records by state, 2024</a>, and each state's most recorded bird. Queried October 2026.</li>
+          <li>Australian Bureau of Statistics. <a href="https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population"><em>National, state and territory population</em></a>. Estimated resident population, 30 June 2024.</li>
+          <li>Australian Bureau of Statistics (2022). <a href="https://www.abs.gov.au/census/find-census-data/geopackages"><em>2021 Census GeoPackages</em></a>, G01 Victoria: suburb boundaries and populations (CC BY 4.0).</li>
+          <li>City of Melbourne. <a href="https://data.melbourne.vic.gov.au/explore/dataset/tree-canopies-2021-urban-forest/"><em>Tree Canopies 2021 (Urban Forest)</em></a> (CC BY 4.0).</li>
+          <li>State boundaries: <a href="https://github.com/rowanhogan/australian-states">rowanhogan/australian-states</a>.</li>
+        </ol>
+      </section>
+      <section>
+        <h3>Notes on the data</h3>
+        <ul>
+          <li>All bird records are from calendar year 2024, the latest full year: eBird's 2025 records in the Atlas stop in August.</li>
+          <li>A record is one sighting logged by one person, not one bird. eBird makes one record per species per checklist.</li>
+          <li>State rates use the population at 30 June 2024. Suburb rates use the 2021 Census, the latest suburb populations; suburbs with fewer than 1,000 residents are greyed out.</li>
+          <li>The tree, observer and time charts use iNaturalist records only: eBird places records at hotspot pins rather than where the bird was, and only iNaturalist shares who made a record and when. Observers are anonymous.</li>
+          <li>Tree cover is from 2021 aerial imagery, the newest available; bird records are from 2024.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>About</h3>
+        <p><strong>Author:</strong> [Your name]<br><strong>Date:</strong> October 2026</p>
+        <p><strong>Created for:</strong> FIT3179 Data Visualisation, Monash University. Charts built with <a href="https://vega.github.io/vega-lite/">Vega-Lite</a> and <a href="https://vega.github.io/vega/">Vega</a>. Headings and chart titles in Fraunces, all other text in Inter, via Google Fonts.</p>
+        <p><strong>Images:</strong> sunset photo: [add source and licence]. Bird photos from Wikimedia Commons: Australian Magpie and Australian Raven by JJ Harrison (CC BY-SA 3.0 / 4.0); Rainbow Lorikeet and Magpie-lark by Charles J. Sharp (CC BY-SA 4.0); Forest Raven by SkippingShoe (CC BY 4.0).</p>
+        <p><strong>Use of AI:</strong> [Write in your own words what you used Claude (Anthropic) for, e.g. writing the Python data-processing scripts, writing and debugging chart specifications and page code, design and layout suggestions, and checking facts and wording.] All data comes from the sources listed.</p>
+      </section>
+    </div>
+  </footer>
+
   <script>
-    vegaEmbed('#map_states', 'js/map_states.vl.json', { actions: false });
-    vegaEmbed('#map_suburbs', 'js/map_suburbs.vl.json', { actions: false });
+    vegaEmbed('#map_states', 'js/map_states.vl.json', { actions: false }).then(async function (result) {
+      // most recorded bird in each state (ALA, 2024) with its photo and credit
+      const birds = await (await fetch('data/state_top_bird_2024.json')).json();
+
+      function showBird(event, item) {
+        if (!item || !item.datum) return;
+        // states carry their name in properties.STATE_NAME; the text labels carry it in state
+        showState(item.datum.properties ? item.datum.properties.STATE_NAME : item.datum.state);
+      }
+
+      function showState(name) {
+        const b = birds.find(function (d) { return d.state === name; });
+        if (!b) return;
+        const img = document.getElementById('state_bird_img');
+        img.src = b.image;
+        img.alt = b.bird;
+        document.getElementById('state_bird_text').innerHTML =
+          '<strong>' + b.state + '</strong>: the ' + b.bird + ', with <strong>' + b.records.toLocaleString() + ' records</strong> in 2024.';
+        document.getElementById('state_bird_info').textContent = b.info;
+        document.getElementById('state_bird_credit').innerHTML =
+          'Photo: <a href="' + b.source + '">' + b.photographer + '</a>, ' + b.licence;
+      }
+
+      // Victoria is shown when the page opens, so the photo box is never empty
+      showState('Victoria');
+
+      // pointerover for a mouse, click for touch screens
+      result.view.addEventListener('pointerover', showBird);
+      result.view.addEventListener('click', showBird);
+    });
+    // suburbs map with a magnifying lens that follows the mouse
+    vegaEmbed('#map_suburbs', 'js/map_suburbs.vl.json', { actions: false, renderer: 'canvas' }).then(function (result) {
+      const box = document.getElementById('map_suburbs');
+      const SIZE = 200;   // lens size on screen, in pixels
+      const ZOOM = 3;     // how many times bigger the lens shows the map
+      const dpr = window.devicePixelRatio || 1;
+
+      // the lens is a second canvas laid over the map; the mouse passes straight through it,
+      // so hovering still reaches the suburb under the centre of the lens
+      const lens = document.createElement('canvas');
+      lens.className = 'lens';
+      lens.width = SIZE * dpr;
+      lens.height = SIZE * dpr;
+      lens.style.width = SIZE + 'px';
+      lens.style.height = SIZE + 'px';
+      box.appendChild(lens);
+      const ctx = lens.getContext('2d');
+
+      // the button switches the lens on and off (off when the page opens)
+      let lensOn = false;
+      const button = document.getElementById('lens_toggle');
+      button.addEventListener('click', function () {
+        lensOn = !lensOn;
+        button.textContent = 'Magnifying glass: ' + (lensOn ? 'on' : 'off');
+        button.setAttribute('aria-pressed', lensOn);
+        if (!lensOn) lens.style.display = 'none';
+      });
+
+      // Vega tells us what the mouse is over (item), so the lens only appears over a suburb's shape,
+      // not over the empty background, the legend or the labels
+      result.view.addEventListener('pointermove', function (e, item) {
+        const overSuburb = item && item.datum && item.datum.properties && item.datum.properties.sal_code;
+        if (!lensOn || !overSuburb) { lens.style.display = 'none'; return; }
+
+        const map = box.querySelector('canvas:not(.lens)');   // the canvas Vega drew the map on
+        const r = map.getBoundingClientRect();
+        const x = e.clientX - r.left;                         // mouse position on the map
+        const y = e.clientY - r.top;
+        if (x < 0 || y < 0 || x > r.width || y > r.height) { lens.style.display = 'none'; return; }
+
+        // copy a small square around the mouse from the map and draw it ZOOM times bigger in the lens
+        const k = map.width / r.width;                        // map canvas pixels per screen pixel
+        const src = SIZE / ZOOM;
+        ctx.fillStyle = '#fbf3e6';
+        ctx.fillRect(0, 0, lens.width, lens.height);
+        ctx.drawImage(map, (x - src / 2) * k, (y - src / 2) * k, src * k, src * k, 0, 0, lens.width, lens.height);
+
+        // a small cross in the middle marks exactly what the mouse is over
+        const c = lens.width / 2, arm = 8 * dpr;
+        ctx.strokeStyle = '#a1221b';
+        ctx.lineWidth = 2 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(c - arm, c); ctx.lineTo(c + arm, c);
+        ctx.moveTo(c, c - arm); ctx.lineTo(c, c + arm);
+        ctx.stroke();
+
+        // centre the lens on the mouse
+        const b = box.getBoundingClientRect();
+        lens.style.left = (e.clientX - b.left - SIZE / 2) + 'px';
+        lens.style.top = (e.clientY - b.top - SIZE / 2) + 'px';
+        lens.style.display = 'block';
+      });
+      box.addEventListener('pointerleave', function () { lens.style.display = 'none'; });
+    });
+    // tilted spike map. Vega has no tilted map projection, so we add one: a Mercator map whose ground is tipped
+    // away from the viewer by `tilt` degrees, with a little perspective (the far side gets smaller).
+    // Spinning uses the projection's normal rotate (its third angle)
+    function tiltedRaw(tilt) {
+      const t = tilt * Math.PI / 180, K = 12;        // K = how strong the perspective is
+      return function (lambda, phi) {
+        const m = d3.geoMercatorRaw(lambda, phi);
+        const den = 1 + m[1] * Math.sin(t) * K;       // the north (far) side is further away, so smaller
+        return [m[0] / den, m[1] * Math.cos(t) / den];
+      };
+    }
+    vega.projection('tilted', function () {
+      let tilt = 50;
+      const mutate = d3.geoProjectionMutator(tiltedRaw);
+      const p = mutate(tilt);
+      p.tilt = function (_) { return arguments.length ? (mutate(tilt = +_), p) : tilt; };
+      return p;
+    });
+    fetch('js/map_spikes_tilted.vg.json').then(function (r) { return r.json(); }).then(function (spec) {
+      // fit the map to the page column's width (the map and spikes scale with it)
+      const box = document.getElementById('map_spikes');
+      spec.width = Math.min(860, box.clientWidth - 10);
+      spec.height = Math.round(spec.width * 0.8);
+      // canvas, not SVG, so the magnifying glass can copy the picture
+      return vegaEmbed('#map_spikes', spec, { actions: false, renderer: 'canvas', bind: '#spike_controls' });
+    }).then(function (result) {
+      const box = document.getElementById('map_spikes');
+      const SIZE = 200, ZOOM = 3;                    // lens size on screen and how many times bigger it shows the map
+      const dpr = window.devicePixelRatio || 1;
+      const lens = document.createElement('canvas');
+      lens.className = 'lens';
+      lens.width = lens.height = SIZE * dpr;
+      lens.style.width = lens.style.height = SIZE + 'px';
+      box.appendChild(lens);
+      const ctx = lens.getContext('2d');
+
+      let lensOn = false, dragging = false, last = null;
+      const button = document.getElementById('spike_lens_toggle');
+      button.addEventListener('click', function () {
+        lensOn = !lensOn;
+        button.textContent = 'Magnifying glass: ' + (lensOn ? 'on' : 'off');
+        button.setAttribute('aria-pressed', lensOn);
+        if (!lensOn) lens.style.display = 'none';
+      });
+
+      // copy the square around the mouse (clientX/Y) from the map and draw it ZOOM times bigger in the lens
+      function draw(cx, cy) {
+        const map = box.querySelector('canvas:not(.lens)');
+        const r = map.getBoundingClientRect();
+        const x = cx - r.left, y = cy - r.top;
+        const k = map.width / r.width, src = SIZE / ZOOM;
+        ctx.fillStyle = '#fbf3e6';
+        ctx.fillRect(0, 0, lens.width, lens.height);
+        ctx.drawImage(map, (x - src / 2) * k, (y - src / 2) * k, src * k, src * k, 0, 0, lens.width, lens.height);
+        const c = lens.width / 2, arm = 8 * dpr;     // a small cross in the middle
+        ctx.strokeStyle = '#a1221b';
+        ctx.lineWidth = 2 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(c - arm, c); ctx.lineTo(c + arm, c);
+        ctx.moveTo(c, c - arm); ctx.lineTo(c, c + arm);
+        ctx.stroke();
+        const b = box.getBoundingClientRect();
+        lens.style.left = (cx - b.left - SIZE / 2) + 'px';
+        lens.style.top = (cy - b.top - SIZE / 2) + 'px';
+        lens.style.display = 'block';
+      }
+
+      // only over a suburb's shape or a spike (Vega tells us what the mouse is over), and hidden while dragging
+      function overMap(item) { return !!(item && item.datum && (item.datum.properties || item.datum.suburb)); }
+      box.addEventListener('pointerdown', function () { dragging = true; lens.style.display = 'none'; });
+      window.addEventListener('pointerup', function () { dragging = false; });
+      result.view.addEventListener('pointermove', function (e, item) {
+        last = overMap(item) ? e : null;
+        if (!lensOn || dragging) return;
+        if (!last) { lens.style.display = 'none'; return; }
+        draw(e.clientX, e.clientY);
+      });
+      box.addEventListener('pointerleave', function () { lens.style.display = 'none'; });
+      // the sliders move the map too: redraw the lens once Vega has redrawn
+      function refresh() { if (lensOn && last && !dragging) requestAnimationFrame(function () { draw(last.clientX, last.clientY); }); }
+      result.view.addSignalListener('spin', refresh);
+      result.view.addSignalListener('tilt', refresh);
+
+      // "Reset view": the map glides back to the starting spin (0) and tilt (50) over 0.8 s instead of jumping
+      // (the sliders follow, as they're bound to these signals). The button flashes dark while it does
+      const reset = document.getElementById('spike_reset');
+      let anim = null;
+      reset.addEventListener('click', function () {
+        reset.classList.add('flash');
+        setTimeout(function () { reset.classList.remove('flash'); }, 250);
+        const view = result.view;
+        const [spinInput, tiltInput] = document.querySelectorAll('#spike_controls input[type="range"]');
+        if (document.activeElement) document.activeElement.blur();
+        const spin0 = view.signal('spin'), tilt0 = view.signal('tilt');
+        // straight back along the slider (spin is always between -180 and 180, so this is never more than half a turn)
+        const spinBy = 0 - spin0;
+        const tiltBy = 50 - tilt0;
+        const start = performance.now(), DURATION = 800;
+        clearTimeout(anim);
+        (function step(now) {
+          const t = Math.min((now - start) / DURATION, 1);
+          const ease = 1 - Math.pow(1 - t, 3);            // fast at first, slowing down at the end
+          const spin = spin0 + spinBy * ease, tilt = tilt0 + tiltBy * ease;
+          view.signal('spin', spin).signal('tilt', tilt).runAsync();
+          // move the slider knobs too: Vega doesn't update a slider that still has focus from being dragged
+          // (Safari keeps the focus on the slider when you then click the button)
+          spinInput.value = spin;
+          tiltInput.value = tilt;
+          // a timer, not requestAnimationFrame, which pauses when the tab isn't visible (as with the canopy slider)
+          if (t < 1) anim = setTimeout(function () { step(performance.now()); }, 16);
+        })(start);
+      });
+    });
     vegaEmbed('#lollipop_species', 'js/lollipop_species.vl.json', { actions: false });
     vegaEmbed('#bump_monthly_ranks', 'js/bump_monthly_ranks.vl.json', { actions: false });
     vegaEmbed('#ridgeline_seasonal', 'js/ridgeline_seasonal.vl.json', { actions: false });
-    vegaEmbed('#map_canopy_dots', 'js/map_canopy_dots.vl.json', { actions: false });
+    // canvas, not SVG: this map has 11,000+ shapes, which SVG is much slower to redraw
+    vegaEmbed('#map_canopy_dots', 'js/map_canopy_dots.vl.json', { actions: false, renderer: 'canvas' }).then(function (result) {
+      const view = result.view;
+      const box = document.getElementById('map_canopy_dots');
+      const slider = document.getElementById('canopy_slider');
+      const dpr = window.devicePixelRatio || 1;
+
+      // Redrawing the map (thousands of shapes) is too slow to do while dragging. So we take three pictures of it
+      // (trees only, both, birds only) and, while the slider moves, only cross-fade those pictures, which costs
+      // almost nothing. When you let go, the real map is set to the chosen view and shown again (for the tooltips)
+      let shots = null;                                    // the three pictures, made the first time you drag
+      const layer = document.createElement('div');         // holds the pictures, laid exactly over the map
+      layer.className = 'map-shots';
+      box.appendChild(layer);
+
+      async function setMap(show) {
+        const mode = show >= 1.99 ? 2 : show <= 0.01 ? 0 : 1;   // 0 = trees only, 1 = both, 2 = birds only
+        view.signal('show', show).signal('mode', mode);
+        await view.runAsync();
+      }
+
+      async function takeShots() {
+        const keep = +slider.value;
+        const map = box.querySelector(':scope > canvas');     // the map Vega drew (not our pictures)
+        layer.style.left = map.offsetLeft + 'px';
+        layer.style.top = map.offsetTop + 'px';
+        // cover the map with a picture of how it looks now, so you don't see it flick between views below
+        const cover = await view.toCanvas(dpr);
+        cover.style.width = (cover.width / dpr) + 'px';
+        layer.replaceChildren(cover);
+        layer.style.display = 'block';
+        const pics = [];
+        for (const v of [0, 1, 2]) {
+          await setMap(v);
+          const c = await view.toCanvas(dpr);
+          c.style.width = (c.width / dpr) + 'px';
+          pics.push(c);
+        }
+        await setMap(keep);
+        layer.replaceChildren(...pics);
+        if (!dragging) layer.style.display = 'none';
+        shots = pics;
+      }
+      // take the pictures shortly after the page loads, so the first drag doesn't have to wait for them
+      setTimeout(function () { if (!shots) takeShots(); }, 2000);
+      let resizeTimer;
+      window.addEventListener('resize', function () {                  // the map's size changed: retake them
+        shots = null;
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () { if (!shots && !dragging) takeShots(); }, 800);
+      });
+
+      // show the mix of pictures for a slider value between 0 and 2
+      function paint(v) {
+        shots[0].style.opacity = v < 1 ? 1 : 0;           // trees only (bottom)
+        shots[1].style.opacity = v < 1 ? v : 1;           // both (middle)
+        shots[2].style.opacity = v > 1 ? v - 1 : 0;       // birds only (top)
+      }
+
+      let dragging = false;
+      async function startDrag() {
+        if (dragging) return;
+        dragging = true;
+        if (!shots) await takeShots();
+        layer.style.display = 'block';
+        paint(+slider.value);
+      }
+      slider.addEventListener('pointerdown', startDrag);
+      slider.addEventListener('input', async function () {
+        if (!dragging) await startDrag();
+        paint(+slider.value);
+      });
+
+      // when you let go, glide to the nearest of the three positions, then hand back to the real map
+      slider.addEventListener('change', function () {
+        const from = +slider.value, to = Math.round(from), start = performance.now();
+        (function step(now) {
+          const t = Math.min((now - start) / 200, 1);       // 200 ms glide
+          slider.value = from + (to - from) * t;
+          if (shots) paint(+slider.value);
+          if (t < 1) { setTimeout(function () { step(performance.now()); }, 16); return; }   // about 60 steps a second
+          setMap(to).then(function () { layer.style.display = 'none'; dragging = false; });
+        })(start);
+      });
+    });
     vegaEmbed('#dotplot_canopy_records', 'js/dotplot_canopy_records.vl.json', { actions: false });
+    vegaEmbed('#jitter_observers', 'js/jitter_observers.vl.json', { actions: false });
+    vegaEmbed('#heatmap_weekday_hour', 'js/heatmap_weekday_hour.vl.json', { actions: false });
+
+    // the paragraphs beside the charts: each one sticks below its section title while its chart scrolls past
+    // (CSS position: sticky), then fades out over the last 150px before its chart's end pushes it up into the
+    // title, while the next paragraph, beside the next chart, slides up into its place
+    (function () {
+      const texts = [...document.querySelectorAll('.chart-text')];
+      function update() {
+        texts.forEach(function (cell) {
+          const inner = cell.firstElementChild;
+          const room = cell.getBoundingClientRect().bottom - inner.getBoundingClientRect().bottom;   // px left to stick
+          const top = parseFloat(getComputedStyle(inner).top);
+          const stuck = inner.getBoundingClientRect().top <= top + 1;
+          inner.style.opacity = stuck ? Math.min(1, Math.max(0, room / 150)) : 1;
+        });
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update);
+      window.addEventListener('load', update);   // after a reload the browser restores the scroll position late
+      update();
+    })();
+
+    // the visualisations fade away as they scroll off the top of the screen (and come back when you scroll back)
+    (function () {
+      const charts = document.querySelectorAll('.map-with-photo, .map-with-lens, .card');
+      function fade() {
+        charts.forEach(function (el) {
+          const r = el.getBoundingClientRect();
+          if (r.top >= 0) { el.style.opacity = 1; return; }           // not yet leaving the top: fully visible
+          const onScreen = Math.max(0, Math.min(r.bottom, window.innerHeight));
+          const share = onScreen / Math.min(r.height, window.innerHeight);
+          el.style.opacity = Math.min(1, share * 1.5);                // starts fading once a third has gone
+        });
+      }
+      window.addEventListener('scroll', fade, { passive: true });
+      fade();
+    })();
+
+    // the charts are drawn on a canvas, which doesn't redraw by itself when a web font finishes loading.
+    // Once every font has loaded, a resize event makes the charts redraw with the right font
+    document.fonts.ready.then(function () { window.dispatchEvent(new Event('resize')); });
   </script>
 </body>
 </html>

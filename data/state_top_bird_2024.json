@@ -1,0 +1,82 @@
+[
+  {
+    "state": "New South Wales",
+    "bird": "Australian Magpie",
+    "records": 73017,
+    "info": "A black-and-white songbird found across most of Australia, known for its warbling, carolling call. In spring some males swoop people to defend their nests. Despite the name, it isn't related to European magpies.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Cracticus_tibicen_hypoleuca_male_domain.jpg/960px-Cracticus_tibicen_hypoleuca_male_domain.jpg",
+    "photographer": "JJ Harrison",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cracticus_tibicen_hypoleuca_male_domain.jpg"
+  },
+  {
+    "state": "Victoria",
+    "bird": "Australian Magpie",
+    "records": 85535,
+    "info": "A black-and-white songbird found across most of Australia, known for its warbling, carolling call. In spring some males swoop people to defend their nests. Despite the name, it isn't related to European magpies.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Cracticus_tibicen_hypoleuca_male_domain.jpg/960px-Cracticus_tibicen_hypoleuca_male_domain.jpg",
+    "photographer": "JJ Harrison",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cracticus_tibicen_hypoleuca_male_domain.jpg"
+  },
+  {
+    "state": "Queensland",
+    "bird": "Rainbow Lorikeet",
+    "records": 50755,
+    "info": "A brightly coloured parrot that feeds on nectar and pollen with a brush-tipped tongue. Noisy flocks are common in parks and gardens along the east coast.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Rainbow_lorikeet_%28Trichoglossus_moluccanus_moluccanus%29_Sydney.jpg/960px-Rainbow_lorikeet_%28Trichoglossus_moluccanus_moluccanus%29_Sydney.jpg",
+    "photographer": "Charles J. Sharp",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Rainbow_lorikeet_(Trichoglossus_moluccanus_moluccanus)_Sydney.jpg"
+  },
+  {
+    "state": "Western Australia",
+    "bird": "Australian Raven",
+    "records": 20008,
+    "info": "The largest of Australia's crows and ravens. Adults have white eyes and shaggy throat feathers, and its call is a slow 'aah-aah-aaah' that fades into a wail.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Corvus_coronoides_-_Doughboy_Head.jpg/960px-Corvus_coronoides_-_Doughboy_Head.jpg",
+    "photographer": "JJ Harrison",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Corvus_coronoides_-_Doughboy_Head.jpg"
+  },
+  {
+    "state": "South Australia",
+    "bird": "Australian Magpie",
+    "records": 16065,
+    "info": "A black-and-white songbird found across most of Australia, known for its warbling, carolling call. In spring some males swoop people to defend their nests. Despite the name, it isn't related to European magpies.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Cracticus_tibicen_hypoleuca_male_domain.jpg/960px-Cracticus_tibicen_hypoleuca_male_domain.jpg",
+    "photographer": "JJ Harrison",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cracticus_tibicen_hypoleuca_male_domain.jpg"
+  },
+  {
+    "state": "Tasmania",
+    "bird": "Forest Raven",
+    "records": 18589,
+    "info": "A raven with a deep, gruff call and a short tail. It is the common raven of Tasmania, and is also found in a few coastal parts of Victoria and New South Wales.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Corvus_tasmanicus_594572154.jpg/960px-Corvus_tasmanicus_594572154.jpg",
+    "photographer": "SkippingShoe",
+    "licence": "CC BY 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Corvus_tasmanicus_594572154.jpg"
+  },
+  {
+    "state": "Australian Capital Territory",
+    "bird": "Australian Magpie",
+    "records": 13159,
+    "info": "A black-and-white songbird found across most of Australia, known for its warbling, carolling call. In spring some males swoop people to defend their nests. Despite the name, it isn't related to European magpies.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Cracticus_tibicen_hypoleuca_male_domain.jpg/960px-Cracticus_tibicen_hypoleuca_male_domain.jpg",
+    "photographer": "JJ Harrison",
+    "licence": "CC BY-SA 3.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Cracticus_tibicen_hypoleuca_male_domain.jpg"
+  },
+  {
+    "state": "Northern Territory",
+    "bird": "Magpie-lark",
+    "records": 8478,
+    "info": "Also called the peewee or mudlark, it is neither a magpie nor a lark. Pairs often sing in a duet, and they build a bowl-shaped nest out of mud.",
+    "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Magpie-lark_%28Grallina_cyanoleuca_cyanoleuca%29_male_Adelaide.jpg/960px-Magpie-lark_%28Grallina_cyanoleuca_cyanoleuca%29_male_Adelaide.jpg",
+    "photographer": "Charles J. Sharp",
+    "licence": "CC BY-SA 4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Magpie-lark_(Grallina_cyanoleuca_cyanoleuca)_male_Adelaide.jpg"
+  }
+]

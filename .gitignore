@@ -1,0 +1,14 @@
+# Python environment (rebuild with: python3 -m venv .venv && .venv/bin/pip install pandas geopandas shapely pyogrio pyproj)
+.venv/
+__pycache__/
+
+# Raw downloads live in ../raw_data, never here (GitHub rejects files over 100 MB)
+*.zip
+*.gpkg
+
+# Local tooling and macOS clutter
+.claude/
+.DS_Store
+
+# Claude Code project notes (kept local)
+CLAUDE.md

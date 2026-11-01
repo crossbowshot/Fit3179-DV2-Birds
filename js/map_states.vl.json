@@ -1,15 +1,20 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
-    "text": "Bird records per 1,000 residents, 2024",
-    "subtitle": [
-      "The Northern Territory has the fewest residents",
-      "but the highest rate"
-    ],
-    "anchor": "start"
+    "text": "Which state reports the most birds for its population?",
+    "anchor": "start",
+    "fontSize": 25,
+    "subtitle": "Bird records per 1,000 residents",
+    "subtitleFontSize": 18
   },
   "width": "container",
-  "height": 380,
+  "height": 520,
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 240,
+    "bottom": 5
+  },
   "projection": {
     "type": "conicEqualArea",
     "parallels": [
@@ -56,7 +61,7 @@
       ],
       "mark": {
         "type": "geoshape",
-        "stroke": "white",
+        "stroke": "black",
         "strokeWidth": 1
       },
       "encoding": {
@@ -64,11 +69,19 @@
           "field": "records_per_1000_residents",
           "type": "quantitative",
           "scale": {
-            "scheme": "greens"
+            "domain": [
+              200,
+              1200
+            ],
+            "type": "log",
+            "range": [
+              "#e2e0f5",
+              "#000c44"
+            ]
           },
           "legend": {
             "title": "Bird records per 1,000 residents",
-            "orient": "bottom",
+            "orient": "bottom-left",
             "direction": "horizontal",
             "gradientLength": 180,
             "titleLimit": 300
@@ -77,21 +90,16 @@
         "tooltip": [
           {
             "field": "properties.STATE_NAME",
-            "title": "State"
-          },
-          {
-            "field": "records_per_1000_residents",
-            "title": "Records per 1,000 residents",
-            "format": ",.1f"
+            "title": "title"
           },
           {
             "field": "bird_records",
-            "title": "Bird records (2024)",
+            "title": "Bird records",
             "format": ","
           },
           {
             "field": "population",
-            "title": "Residents (June 2024)",
+            "title": "Residents",
             "format": ","
           }
         ]
@@ -116,7 +124,7 @@
       },
       "mark": {
         "type": "rule",
-        "color": "#555",
+        "color": "black",
         "strokeWidth": 1
       },
       "encoding": {
@@ -236,14 +244,41 @@
             "test": "datum.records_per_1000_residents > 1000",
             "value": "white"
           },
-          "value": "#222"
+          "value": "black"
         }
       }
     }
   ],
   "config": {
+    "background": "#fbf3e6",
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
   }
 }

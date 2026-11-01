@@ -1,21 +1,14 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
-    "text": "Bird records per 1,000 residents, Melbourne suburbs, 2024",
-    "subtitle": [
-      "Records pile up where the birds and birders are, not where most people live",
-      "Grey suburbs have fewer than 1,000 residents, too few for a fair rate"
-    ],
-    "anchor": "start"
+    "text": "Which suburb in Melbourne reports the most birds for its population?",
+    "anchor": "start",
+    "fontSize": 25,
+    "subtitle": "Bird records per 1,000 residents",
+    "subtitleFontSize": 18
   },
   "width": "container",
-  "height": 950,
-  "padding": {
-    "left": 60,
-    "top": 5,
-    "right": 5,
-    "bottom": 5
-  },
+  "height": 1000,
   "projection": {
     "type": "mercator"
   },
@@ -65,8 +58,8 @@
       ],
       "mark": {
         "type": "geoshape",
-        "stroke": "white",
-        "strokeWidth": 0.4
+        "stroke": "black",
+        "strokeWidth": 1
       },
       "encoding": {
         "color": {
@@ -83,13 +76,13 @@
               "1,000 or more"
             ],
             "range": [
-              "#dedede",
-              "#c7e9c0",
-              "#a1d99b",
-              "#74c476",
-              "#41ab5d",
-              "#238b45",
-              "#005a32"
+              "#ddd0bb",
+              "#e2e0f5",
+              "#b4b0cf",
+              "#8883ab",
+              "#5e5887",
+              "#343065",
+              "#000c44"
             ]
           },
           "legend": {
@@ -105,7 +98,7 @@
         "tooltip": [
           {
             "field": "suburb",
-            "title": "Suburb"
+            "title": "title"
           },
           {
             "field": "records_per_1000_residents",
@@ -114,12 +107,12 @@
           },
           {
             "field": "bird_records",
-            "title": "Bird records (2024)",
+            "title": "Bird records",
             "format": ","
           },
           {
             "field": "population_2021",
-            "title": "Residents (2021 Census)",
+            "title": "Residents",
             "format": ","
           }
         ]
@@ -137,8 +130,8 @@
           {
             "lon": 144.66,
             "lat": -37.836,
-            "lon2": 144.45,
-            "lat2": -37.7
+            "lon2": 144.47,
+            "lat2": -38.2
           },
           {
             "lon": 144.618,
@@ -150,7 +143,7 @@
       },
       "mark": {
         "type": "rule",
-        "color": "#444",
+        "color": "black",
         "strokeWidth": 0.8
       },
       "encoding": {
@@ -182,38 +175,10 @@
             "lon": 145.33,
             "lat": -38.47,
             "text": "Somers: highest rate,\n4,113 records per\n1,000 residents"
-          }
-        ]
-      },
-      "mark": {
-        "type": "text",
-        "fontSize": 11,
-        "lineBreak": "\n",
-        "baseline": "middle",
-        "dx": 3,
-        "color": "#222",
-        "align": "left"
-      },
-      "encoding": {
-        "longitude": {
-          "field": "lon",
-          "type": "quantitative"
-        },
-        "latitude": {
-          "field": "lat",
-          "type": "quantitative"
-        },
-        "text": {
-          "field": "text"
-        }
-      }
-    },
-    {
-      "data": {
-        "values": [
+          },
           {
-            "lon": 144.45,
-            "lat": -37.7,
+            "lon": 144.47,
+            "lat": -38.2,
             "text": "Tarneit: 56,370 residents\nbut only 388 bird records"
           }
         ]
@@ -223,9 +188,9 @@
         "fontSize": 11,
         "lineBreak": "\n",
         "baseline": "middle",
-        "dx": -3,
-        "color": "#222",
-        "align": "right"
+        "dx": 3,
+        "color": "black",
+        "align": "left"
       },
       "encoding": {
         "longitude": {
@@ -243,8 +208,35 @@
     }
   ],
   "config": {
+    "background": "#fbf3e6",
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
   }
 }

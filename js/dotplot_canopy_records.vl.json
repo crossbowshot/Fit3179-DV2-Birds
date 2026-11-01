@@ -1,18 +1,9 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
-    "text": "Two big parks get most of the attention",
-    "subtitle": [
-      "Each suburb's share of the City of Melbourne's trees (2021)",
-      "and of its iNaturalist bird records (2024)",
-      "Parkville and Melbourne hold 42% of the City's trees but",
-      "69% of its bird records",
-      "East Melbourne has 11% of the trees, including the Fitzroy",
-      "Gardens, but only 3% of the records"
-    ],
+    "text": "Not all trees get the same attention",
     "anchor": "start",
-    "fontSize": 12,
-    "subtitleFontSize": 10
+    "fontSize": 22
   },
   "width": "container",
   "height": 360,
@@ -30,7 +21,7 @@
   },
   "transform": [
     {
-      "calculate": "datum.suburb == 'Melbourne' ? 'Melbourne (CBD, Botanic Gardens)' : datum.suburb == 'Parkville' ? 'Parkville (Royal Park)' : datum.suburb == 'East Melbourne' ? 'East Melbourne (Fitzroy Gardens)' : datum.suburb",
+      "calculate": "datum.suburb == 'Melbourne' ? 'Melbourne (Botanic Gardens)' : datum.suburb == 'Parkville' ? 'Parkville (Royal Park)' : datum.suburb == 'East Melbourne' ? 'East Melbourne (Fitzroy Gardens)' : datum.suburb",
       "as": "place"
     },
     {
@@ -63,7 +54,16 @@
         "ticks": false,
         "labelFontSize": 11,
         "labelLimit": 300,
-        "labelPadding": 8
+        "labelPadding": 8,
+        "labelExpr": "indexof(datum.label, ' (') > 0 ? [substring(datum.label, 0, indexof(datum.label, ' (')), substring(datum.label, indexof(datum.label, ' (') + 1)] : datum.label",
+        "labelLineHeight": 12,
+        "labelOffset": {
+          "condition": {
+            "test": "indexof(datum.label, ' (') > 0",
+            "value": -6
+          },
+          "value": 0
+        }
       }
     },
     "x": {
@@ -72,19 +72,18 @@
       "scale": {
         "domain": [
           0,
-          40
+          35
         ]
       },
       "axis": {
-        "title": [
-          "Share of the City of Melbourne's",
-          "total (%)"
-        ],
-        "format": "d",
+        "title": null,
+        "labelExpr": "datum.value + '%'",
         "tickCount": 4,
         "grid": true,
-        "gridColor": "#eeeeee",
-        "domain": false
+        "gridColor": "#e8d9c3",
+        "domain": false,
+        "labelFontSize": 14,
+        "labelPadding": 8
       }
     }
   },
@@ -92,7 +91,7 @@
     {
       "mark": {
         "type": "line",
-        "color": "#c4c4c4",
+        "color": "#8c7458",
         "strokeWidth": 2.5
       },
       "encoding": {
@@ -118,7 +117,7 @@
             ],
             "range": [
               "#21823f",
-              "#d94801"
+              "#343065"
             ]
           },
           "legend": {
@@ -132,34 +131,71 @@
         "tooltip": [
           {
             "field": "place",
-            "title": "Suburb"
+            "title": "title"
           },
           {
-            "field": "what",
-            "title": "Measure"
+            "field": "trees_text",
+            "title": "Share of the City's trees"
           },
           {
-            "field": "share",
-            "title": "Share (%)",
-            "format": ".1f"
+            "field": "records_text",
+            "title": "Share of the bird records"
           },
           {
             "field": "records",
-            "title": "Bird records (2024)",
+            "title": "Bird records",
             "format": ","
-          },
-          {
-            "field": "tree_cover_pct",
-            "title": "Ground covered by trees (%)",
-            "format": ".1f"
           }
         ]
-      }
+      },
+      "transform": [
+        {
+          "calculate": "format(+datum.share_of_trees_pct, '.1f') + '%'",
+          "as": "trees_text"
+        },
+        {
+          "calculate": "format(+datum.share_of_records_pct, '.1f') + '%'",
+          "as": "records_text"
+        }
+      ]
     }
   ],
   "config": {
+    "background": null,
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
+  },
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 5,
+    "bottom": 0
   }
 }

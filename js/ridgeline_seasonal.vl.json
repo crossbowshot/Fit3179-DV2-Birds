@@ -2,21 +2,12 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
     "text": "Some birds come and go with the seasons",
-    "subtitle": [
-      "When in the year each bird is reported in Greater Melbourne,",
-      "2024, allowing for how much birdwatching happens each month",
-      "Spring and summer migrants like the Sacred Kingfisher are",
-      "almost absent for 3 to 5 months of the year",
-      "The autumn and winter birds are seen all year round, but are",
-      "reported most in their peak months"
-    ],
     "anchor": "start",
-    "offset": 16,
-    "fontSize": 12,
-    "subtitleFontSize": 10
+    "offset": 36,
+    "fontSize": 22
   },
   "width": "container",
-  "height": 300,
+  "height": 375,
   "data": {
     "url": "data/melb_seasonal_species_2024.csv",
     "format": {
@@ -60,7 +51,7 @@
       ]
     },
     {
-      "calculate": "datum.row - datum.profile_pct / datum.max_profile * 2.3",
+      "calculate": "datum.row - datum.profile_pct / datum.max_profile * 1.3",
       "as": "ridge_top"
     }
   ],
@@ -94,7 +85,10 @@
         "labelExpr": "['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][datum.value - 1]",
         "grid": false,
         "domain": false,
-        "ticks": false
+        "ticks": false,
+        "labelFontSize": 14,
+        "labelPadding": 8,
+        "labelFlush": false
       }
     },
     "y": {
@@ -102,7 +96,7 @@
       "type": "quantitative",
       "scale": {
         "domain": [
-          -1.4,
+          -0.35,
           12
         ],
         "reverse": true,
@@ -118,7 +112,7 @@
         "type": "area",
         "interpolate": "monotone",
         "fillOpacity": 0.85,
-        "stroke": "white",
+        "stroke": "#fbf3e6",
         "strokeWidth": 1
       },
       "encoding": {
@@ -139,18 +133,22 @@
               "Spring"
             ],
             "range": [
-              "#E69F00",
-              "#A6761D",
-              "#0072B2",
-              "#009E73"
+              "#c23b0e",
+              "#e69f00",
+              "#0b5f99",
+              "#009e73"
             ]
           },
           "legend": {
-            "title": "Busiest season",
-            "orient": "bottom",
+            "title": "Season",
+            "orient": "none",
             "direction": "horizontal",
             "symbolType": "square",
-            "labelFontSize": 11
+            "labelFontSize": 11,
+            "titleOrient": "left",
+            "titlePadding": 10,
+            "legendX": -106,
+            "legendY": -22
           }
         }
       }
@@ -164,39 +162,47 @@
       "encoding": {
         "tooltip": [
           {
-            "field": "species",
-            "title": "Bird"
-          },
-          {
-            "field": "month_name",
-            "title": "Month"
+            "field": "heading",
+            "title": "title"
           },
           {
             "field": "records",
-            "title": "Records that month",
+            "title": "Records",
             "format": ","
           },
           {
-            "field": "profile_pct",
-            "title": "Share of its year (%, allowing for birdwatching)",
-            "format": ".0f"
+            "field": "month_share_text",
+            "title": "Share"
           }
         ]
-      }
+      },
+      "transform": [
+        {
+          "calculate": "datum.species + ', ' + datum.month_name",
+          "as": "heading"
+        },
+        {
+          "calculate": "format(+datum.share_of_month_pct, '.2f') + '% of all records that month'",
+          "as": "month_share_text"
+        }
+      ]
     },
     {
       "transform": [
         {
           "filter": "datum.month == 1"
+        },
+        {
+          "filter": "!(datum.species == \"Horsfield's Bronze-cuckoo\" || datum.species == \"Shining Bronze-cuckoo\" || datum.species == \"Black-shouldered Kite\")"
         }
       ],
       "mark": {
         "type": "text",
-        "align": "right",
+        "align": "left",
         "baseline": "bottom",
-        "dx": -6,
+        "dx": -106,
         "fontSize": 11,
-        "color": "#222"
+        "color": "black"
       },
       "encoding": {
         "y": {
@@ -206,11 +212,76 @@
           "field": "species"
         }
       }
+    },
+    {
+      "transform": [
+        {
+          "filter": "datum.month == 1"
+        },
+        {
+          "filter": "datum.species == \"Horsfield's Bronze-cuckoo\" || datum.species == \"Shining Bronze-cuckoo\" || datum.species == \"Black-shouldered Kite\""
+        },
+        {
+          "calculate": "datum.species == \"Horsfield's Bronze-cuckoo\" ? [\"Horsfield's\", \"Bronze-cuckoo\"] : datum.species == \"Shining Bronze-cuckoo\" ? [\"Shining\", \"Bronze-cuckoo\"] : datum.species == \"Black-shouldered Kite\" ? [\"Black-shouldered\", \"Kite\"] : datum.species",
+          "as": "name_lines"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "bottom",
+        "dx": -106,
+        "fontSize": 11,
+        "color": "black",
+        "lineHeight": 11,
+        "dy": -11
+      },
+      "encoding": {
+        "y": {
+          "field": "row"
+        },
+        "text": {
+          "field": "name_lines"
+        }
+      }
     }
   ],
   "config": {
+    "background": null,
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
+  },
+  "padding": {
+    "left": 5,
+    "top": 5,
+    "right": 5,
+    "bottom": 0
   }
 }

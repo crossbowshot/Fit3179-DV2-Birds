@@ -1,0 +1,492 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v6.json",
+  "description": "Tilted spike map: one spike per Greater Melbourne suburb, height = bird records in 2024. Uses the custom 'tilted' projection registered in index.html. Width and height are set from the page width in index.html.",
+  "title": {
+    "text": "Where do the most bird records come from?",
+    "subtitle": "Spike height = bird records in each suburb",
+    "anchor": "start",
+    "font": "Fraunces",
+    "fontWeight": 600,
+    "fontSize": 25,
+    "color": "black",
+    "subtitleFont": "Inter",
+    "subtitleFontSize": 18,
+    "subtitleColor": "black",
+    "offset": 12
+  },
+  "width": 780,
+  "height": 620,
+  "padding": 5,
+  "background": null,
+  "signals": [
+    {
+      "name": "spin",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": -180,
+        "max": 180,
+        "step": 1,
+        "name": "Spin"
+      },
+      "on": [
+        {
+          "events": "[pointerdown, window:pointerup] > window:pointermove",
+          "update": "((spin + (x() - lastX) * 0.25 + 540) % 360) - 180"
+        }
+      ]
+    },
+    {
+      "name": "tilt",
+      "value": 50,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 90,
+        "step": 1,
+        "name": "Tilt"
+      },
+      "on": [
+        {
+          "events": "[pointerdown, window:pointerup] > window:pointermove",
+          "update": "clamp(tilt + (y() - lastY) * 0.2, 0, 90)"
+        }
+      ]
+    },
+    {
+      "name": "lastX",
+      "value": 0,
+      "on": [
+        {
+          "events": "pointerdown, window:pointermove",
+          "update": "x()"
+        }
+      ]
+    },
+    {
+      "name": "lastY",
+      "value": 0,
+      "on": [
+        {
+          "events": "pointerdown, window:pointermove",
+          "update": "y()"
+        }
+      ]
+    },
+    {
+      "name": "spikeScale",
+      "update": "330 * width / 780"
+    },
+    {
+      "name": "centreY",
+      "update": "height / 2 - 40 + (height * 0.85 - height / 2 + 40) * pow(tilt / 90, 2)"
+    },
+    {
+      "name": "axisShow",
+      "update": "clamp((tilt - 80) / 8, 0, 1)"
+    }
+  ],
+  "data": [
+    {
+      "name": "recs",
+      "url": "data/melb_suburb_points_2024.csv",
+      "format": {
+        "type": "csv",
+        "parse": {
+          "lon": "number",
+          "lat": "number",
+          "bird_records": "number",
+          "population_2021": "number"
+        }
+      }
+    },
+    {
+      "name": "sub",
+      "url": "data/melb_suburbs.geojson",
+      "format": {
+        "type": "json",
+        "property": "features"
+      },
+      "transform": [
+        {
+          "type": "lookup",
+          "from": "recs",
+          "key": "sal_code",
+          "fields": [
+            "properties.sal_code"
+          ],
+          "values": [
+            "bird_records"
+          ],
+          "as": [
+            "bird_records"
+          ],
+          "default": 0
+        }
+      ]
+    },
+    {
+      "name": "pts",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.bird_records > 0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "proj",
+          "fields": [
+            "lon",
+            "lat"
+          ]
+        },
+        {
+          "type": "formula",
+          "as": "h",
+          "expr": "datum.bird_records / 57416 * spikeScale * sin(tilt * PI / 180)"
+        },
+        {
+          "type": "formula",
+          "as": "top",
+          "expr": "datum.y - datum.h"
+        },
+        {
+          "type": "collect",
+          "sort": {
+            "field": "y"
+          }
+        }
+      ],
+      "source": "recs"
+    },
+    {
+      "name": "ticks",
+      "transform": [
+        {
+          "type": "sequence",
+          "start": 0,
+          "stop": 60001,
+          "step": 10000,
+          "as": "records"
+        },
+        {
+          "type": "formula",
+          "as": "y",
+          "expr": "centreY - datum.records / 57416 * spikeScale * sin(tilt * PI / 180)"
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "proj",
+      "type": "tilted",
+      "rotate": [
+        {
+          "signal": "-145.0"
+        },
+        {
+          "signal": "37.85"
+        },
+        {
+          "signal": "spin"
+        }
+      ],
+      "tilt": {
+        "signal": "tilt"
+      },
+      "scale": {
+        "signal": "33000 * width / 780"
+      },
+      "translate": [
+        {
+          "signal": "width / 2"
+        },
+        {
+          "signal": "centreY"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "type": "shape",
+      "from": {
+        "data": "sub"
+      },
+      "transform": [
+        {
+          "type": "geoshape",
+          "projection": "proj"
+        }
+      ],
+      "encode": {
+        "update": {
+          "fill": {
+            "value": "#ece4d4"
+          },
+          "stroke": {
+            "value": "#d2c4ab"
+          },
+          "strokeWidth": {
+            "value": 0.4
+          },
+          "tooltip": {
+            "signal": "{title: datum.properties.suburb, 'Bird records': format(datum.bird_records, ',')}"
+          }
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "from": {
+        "data": "ticks"
+      },
+      "interactive": false,
+      "encode": {
+        "update": {
+          "x": {
+            "value": 50
+          },
+          "x2": {
+            "signal": "width"
+          },
+          "y": {
+            "field": "y"
+          },
+          "y2": {
+            "field": "y"
+          },
+          "stroke": {
+            "value": "#e8d9c3"
+          },
+          "strokeWidth": {
+            "value": 1
+          },
+          "opacity": {
+            "signal": "axisShow"
+          }
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "from": {
+        "data": "pts"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "y"
+          },
+          "x2": {
+            "field": "x"
+          },
+          "y2": {
+            "field": "top"
+          },
+          "stroke": {
+            "value": "#343065"
+          },
+          "strokeWidth": {
+            "value": 3.2
+          },
+          "strokeOpacity": {
+            "value": 0.85
+          },
+          "strokeCap": {
+            "value": "round"
+          },
+          "tooltip": {
+            "signal": "{title: datum.suburb, 'Bird records': format(datum.bird_records, ',')}"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "pts"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "top",
+            "offset": {
+              "signal": "datum.suburb === 'Melbourne' ? -7 - 18 * clamp((tilt - 60) / 20, 0, 1) : -7"
+            }
+          },
+          "align": {
+            "value": "center"
+          },
+          "text": {
+            "signal": "datum.bird_records > 25000 ? datum.suburb : ''"
+          },
+          "font": {
+            "value": "Inter"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "stroke": {
+            "value": "#fbf3e6"
+          },
+          "strokeWidth": {
+            "value": 3
+          },
+          "strokeOpacity": {
+            "value": 0.9
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "pts"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "top",
+            "offset": {
+              "signal": "datum.suburb === 'Melbourne' ? -7 - 18 * clamp((tilt - 60) / 20, 0, 1) : -7"
+            }
+          },
+          "align": {
+            "value": "center"
+          },
+          "text": {
+            "signal": "datum.bird_records > 25000 ? datum.suburb : ''"
+          },
+          "font": {
+            "value": "Inter"
+          },
+          "fontSize": {
+            "value": 11
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "fill": {
+            "value": "black"
+          }
+        }
+      }
+    },
+    {
+      "type": "rule",
+      "interactive": false,
+      "encode": {
+        "update": {
+          "x": {
+            "value": 50
+          },
+          "x2": {
+            "value": 50
+          },
+          "y": {
+            "signal": "centreY"
+          },
+          "y2": {
+            "signal": "centreY - 60000 / 57416 * spikeScale * sin(tilt * PI / 180)"
+          },
+          "stroke": {
+            "value": "black"
+          },
+          "strokeWidth": {
+            "value": 1
+          },
+          "opacity": {
+            "signal": "axisShow"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "from": {
+        "data": "ticks"
+      },
+      "interactive": false,
+      "encode": {
+        "update": {
+          "x": {
+            "value": 0
+          },
+          "y": {
+            "field": "y"
+          },
+          "align": {
+            "value": "left"
+          },
+          "baseline": {
+            "value": "middle"
+          },
+          "text": {
+            "signal": "format(datum.records, ',')"
+          },
+          "font": {
+            "value": "Inter"
+          },
+          "fontSize": {
+            "value": 14
+          },
+          "fill": {
+            "value": "black"
+          },
+          "opacity": {
+            "signal": "axisShow"
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "interactive": false,
+      "encode": {
+        "update": {
+          "x": {
+            "value": 0
+          },
+          "y": {
+            "signal": "centreY - 60000 / 57416 * spikeScale * sin(tilt * PI / 180) - 16"
+          },
+          "align": {
+            "value": "left"
+          },
+          "text": {
+            "value": "Bird records"
+          },
+          "font": {
+            "value": "Inter"
+          },
+          "fontSize": {
+            "value": 14
+          },
+          "fontWeight": {
+            "value": 600
+          },
+          "fill": {
+            "value": "black"
+          },
+          "opacity": {
+            "signal": "axisShow"
+          }
+        }
+      }
+    }
+  ]
+}

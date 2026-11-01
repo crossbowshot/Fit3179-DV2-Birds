@@ -1,22 +1,17 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
-    "text": "Melbourne's 15 most reported birds, 2024",
-    "subtitle": [
-      "No single bird dominates: the top species is just 3.7%",
-      "of 1,060,628 records",
-      "Only one bird introduced from overseas, the Common Myna,",
-      "makes the top 10; the Spotted Dove is 11th"
-    ],
-    "anchor": "start"
+    "text": "Melbourne's 15 most reported birds",
+    "anchor": "start",
+    "fontSize": 22
   },
   "width": "container",
-  "height": 368,
+  "height": 400,
   "padding": {
     "left": 5,
     "top": 5,
     "right": 45,
-    "bottom": 5
+    "bottom": 0
   },
   "data": {
     "url": "data/melb_top15_species_2024.csv",
@@ -43,8 +38,18 @@
         "domain": false,
         "ticks": false,
         "labelFontSize": 12,
-        "labelPadding": 6,
-        "labelLimit": 300
+        "labelPadding": 114,
+        "labelLimit": 300,
+        "labelExpr": "datum.label == 'Sulphur-crested Cockatoo' ? ['Sulphur-crested', 'Cockatoo'] : datum.label",
+        "labelLineHeight": 13,
+        "labelOffset": {
+          "condition": {
+            "test": "datum.label == 'Sulphur-crested Cockatoo'",
+            "value": -6.5
+          },
+          "value": 0
+        },
+        "labelAlign": "left"
       }
     },
     "x": {
@@ -57,10 +62,12 @@
         ]
       },
       "axis": {
-        "title": "Bird records in Greater Melbourne (2024)",
+        "title": null,
         "format": ",d",
         "tickCount": 5,
-        "grid": false
+        "grid": false,
+        "labelFontSize": 14,
+        "labelPadding": 8
       }
     }
   },
@@ -83,10 +90,11 @@
               "Introduced"
             ],
             "range": [
-              "#41ab5d",
-              "#e6550d"
+              "#5e5887",
+              "#b4b0cf"
             ]
-          }
+          },
+          "legend": null
         }
       }
     },
@@ -94,7 +102,9 @@
       "mark": {
         "type": "circle",
         "size": 110,
-        "opacity": 1
+        "opacity": 1,
+        "stroke": "#343065",
+        "strokeWidth": 1.5
       },
       "encoding": {
         "color": {
@@ -106,39 +116,50 @@
               "Introduced"
             ],
             "range": [
-              "#41ab5d",
-              "#e6550d"
+              "#5e5887",
+              "#ffffff"
             ]
           },
           "legend": {
-            "title": null,
-            "orient": "bottom",
+            "title": "Legend",
+            "orient": "none",
             "symbolType": "circle",
             "labelFontSize": 12,
-            "direction": "horizontal"
+            "direction": "vertical",
+            "symbolStrokeColor": "#343065",
+            "symbolStrokeWidth": 1.5,
+            "titleOrient": "top",
+            "titleFontSize": 12,
+            "titlePadding": 6,
+            "legendX": {
+              "expr": "width - 95"
+            },
+            "legendY": {
+              "expr": "height - 75"
+            }
           }
         },
         "tooltip": [
           {
             "field": "species",
-            "title": "Species"
+            "title": "title"
           },
           {
-            "field": "records",
-            "title": "Records",
-            "format": ","
-          },
-          {
-            "field": "share_pct",
-            "title": "Share of all records (%)",
-            "format": ".1f"
+            "field": "share_text",
+            "title": "Share of all records"
           },
           {
             "field": "status",
-            "title": "Status in Australia"
+            "title": "Native or introduced"
           }
         ]
-      }
+      },
+      "transform": [
+        {
+          "calculate": "format(datum.share_pct / 100, '.1%') + ' (about 1 in ' + round(100 / datum.share_pct) + ')'",
+          "as": "share_text"
+        }
+      ]
     },
     {
       "mark": {
@@ -146,7 +167,7 @@
         "align": "left",
         "dx": 9,
         "fontSize": 11,
-        "color": "#444"
+        "color": "black"
       },
       "encoding": {
         "text": {
@@ -158,8 +179,40 @@
     }
   ],
   "config": {
+    "background": null,
     "view": {
       "stroke": null
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
+  },
+  "resolve": {
+    "scale": {
+      "color": "independent"
     }
   }
 }

@@ -2,11 +2,8 @@
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "title": {
     "text": "Where Melbourne's bird records come from, 2024",
-    "subtitle": [
-      "Each circle's area shows the number of bird records in a suburb",
-      "Two of the five biggest circles are places where almost no one lives"
-    ],
-    "anchor": "start"
+    "anchor": "start",
+    "fontSize": 22
   },
   "width": 620,
   "height": 540,
@@ -24,8 +21,8 @@
       },
       "mark": {
         "type": "geoshape",
-        "fill": "#ececec",
-        "stroke": "white",
+        "fill": "#ddd0bb",
+        "stroke": "#fbf3e6",
         "strokeWidth": 0.5
       },
       "encoding": {
@@ -52,7 +49,7 @@
         "type": "circle",
         "color": "#238b45",
         "opacity": 0.55,
-        "stroke": "white",
+        "stroke": "#fbf3e6",
         "strokeWidth": 0.6
       },
       "encoding": {
@@ -86,7 +83,7 @@
             "format": ",.0f",
             "symbolFillColor": "#238b45",
             "symbolOpacity": 0.55,
-            "symbolStrokeColor": "white",
+            "symbolStrokeColor": "#fbf3e6",
             "labelFontSize": 11
           }
         },
@@ -101,12 +98,12 @@
           },
           {
             "field": "bird_records",
-            "title": "Bird records (2024)",
+            "title": "Bird records",
             "format": ","
           },
           {
             "field": "population_2021",
-            "title": "Residents (2021 Census)",
+            "title": "Residents",
             "format": ","
           }
         ]
@@ -131,7 +128,7 @@
       },
       "mark": {
         "type": "rule",
-        "color": "#444",
+        "color": "black",
         "strokeWidth": 0.8
       },
       "encoding": {
@@ -173,7 +170,7 @@
         "dx": 3,
         "fontSize": 11,
         "lineBreak": "\n",
-        "color": "#222"
+        "color": "black"
       },
       "encoding": {
         "longitude": {
@@ -191,8 +188,35 @@
     }
   ],
   "config": {
+    "background": "#fbf3e6",
     "view": {
       "stroke": null
-    }
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
   }
 }
