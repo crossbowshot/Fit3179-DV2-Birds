@@ -1,0 +1,131 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "width": "container",
+  "height": "container",
+  "padding": {
+    "left": 0,
+    "top": 0,
+    "right": 0,
+    "bottom": 0
+  },
+  "data": {
+    "url": "data/melb_suburb_record_groups_2024.csv",
+    "format": {
+      "type": "csv",
+      "parse": {
+        "order": "number",
+        "suburbs": "number"
+      }
+    }
+  },
+  "encoding": {
+    "x": {
+      "field": "group",
+      "type": "ordinal",
+      "axis": {
+        "title": "Bird records in each suburb",
+        "titleFontSize": 14,
+        "titlePadding": 10,
+        "labelAngle": 0,
+        "labelFontSize": 12,
+        "domain": false,
+        "ticks": false,
+        "labelPadding": 8
+      },
+      "scale": {
+        "domain": [
+          "None",
+          "1 to 99",
+          "100 to 999",
+          "1,000 to 9,999",
+          "10,000 or more"
+        ]
+      }
+    },
+    "y": {
+      "field": "suburbs",
+      "type": "quantitative",
+      "axis": null,
+      "scale": {
+        "domain": [
+          0,
+          260
+        ]
+      }
+    }
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "cornerRadiusEnd": 4,
+        "width": {
+          "band": 0.7
+        },
+        "color": "#b4b0cf"
+      },
+      "encoding": {
+        "tooltip": [
+          {
+            "field": "group",
+            "title": "title"
+          },
+          {
+            "field": "suburbs",
+            "title": "Suburbs"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -8,
+        "fontSize": 14,
+        "fontWeight": 600,
+        "color": "black"
+      },
+      "encoding": {
+        "text": {
+          "field": "suburbs"
+        }
+      }
+    }
+  ],
+  "config": {
+    "background": null,
+    "view": {
+      "stroke": null
+    },
+    "title": {
+      "color": "black",
+      "font": "Fraunces",
+      "fontWeight": 600,
+      "subtitleFont": "Inter",
+      "subtitleFontWeight": "normal"
+    },
+    "axis": {
+      "labelColor": "black",
+      "titleColor": "black",
+      "domainColor": "#8c7458",
+      "tickColor": "#8c7458",
+      "gridColor": "#e8d9c3"
+    },
+    "legend": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "header": {
+      "labelColor": "black",
+      "titleColor": "black"
+    },
+    "text": {
+      "color": "black"
+    },
+    "font": "Inter"
+  },
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  }
+}

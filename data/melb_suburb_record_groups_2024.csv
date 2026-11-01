@@ -1,0 +1,6 @@
+order,group,suburbs,rarely_counted
+1,None,10,yes
+2,1 to 99,151,yes
+3,100 to 999,225,no
+4,"1,000 to 9,999",165,no
+5,"10,000 or more",21,no

@@ -729,6 +729,34 @@ h1 {
   row-gap: 40px;
 }
 
+/* "Your turn": text on the left, the suburb-records bar chart on the right (one column on narrow screens) */
+.outro-top {
+  display: grid;
+  grid-template-columns: minmax(0, 580px) minmax(0, 1fr);
+  column-gap: 48px;
+  row-gap: 32px;
+  align-items: start;
+}
+
+/* the chart has no box: it fills the space beside the text, as tall as the text. Its title is an h2 in the page
+   (not a Vega title), so it gets the same font, size and underline as "Your turn" */
+.outro-top > .outro-chart {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+#bar_suburb_coverage {
+  flex: 1;
+  min-height: 360px;
+}
+
+@media (max-width: 1000px) {
+  .outro-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* four headline numbers in rounded boxes, side by side */
 .stat-boxes {
   display: grid;

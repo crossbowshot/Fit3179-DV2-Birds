@@ -270,6 +270,46 @@
       }
     },
     {
+      "type": "symbol",
+      "from": {
+        "data": "pts"
+      },
+      "encode": {
+        "update": {
+          "x": {
+            "field": "x"
+          },
+          "y": {
+            "field": "y"
+          },
+          "shape": {
+            "value": "circle"
+          },
+          "size": {
+            "signal": "8 + datum.bird_records / 57416 * 900"
+          },
+          "fill": {
+            "value": "#343065"
+          },
+          "fillOpacity": {
+            "signal": "0.75 * clamp(1 - tilt / 30, 0, 1)"
+          },
+          "stroke": {
+            "value": "#fbf3e6"
+          },
+          "strokeWidth": {
+            "value": 0.5
+          },
+          "strokeOpacity": {
+            "signal": "clamp(1 - tilt / 30, 0, 1)"
+          },
+          "tooltip": {
+            "signal": "{title: datum.suburb, 'Bird records': format(datum.bird_records, ',')}"
+          }
+        }
+      }
+    },
+    {
       "type": "rule",
       "from": {
         "data": "pts"

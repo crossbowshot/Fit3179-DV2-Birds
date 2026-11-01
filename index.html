@@ -22,7 +22,7 @@
   <header class="title-page">
     <h1>The Birds<br>We See</h1>
     <!-- byline: fill in your name -->
-    <p class="title-byline">By [Your name] · October 2026</p>
+    <p class="title-byline">By Abdullah Malik · October 2026</p>
     <!-- a hint that the page continues below -->
     <p class="scroll-cue" aria-hidden="true">Scroll<span>↓</span></p>
   </header>
@@ -180,9 +180,13 @@
 
     <!-- closing text, on cream between the charts and the sources -->
     <div class="outro">
+      <!-- the text on the left, the bar chart of how many records each suburb got on the right -->
+      <div class="outro-top">
       <div class="outro-text">
       <h2>Your turn</h2>
       <p class="intro">These records are made by everyday people, and you can be one of them. Whether you’re a keen birdwatcher or just out for a stroll, log the birds you see on apps like eBird or iNaturalist. Every record helps scientists track how our birds are doing. Together, these records show which birds are becoming rarer, where they live, and how they’re shifting as our cities and climate change. The records help decide which birds need protecting and which places matter most to them. Scientists can’t be everywhere, so we need to help fill in the gaps, from backyards to suburbs that rarely get counted.</p>
+      </div>
+      <div class="outro-chart"><h2>The suburbs we miss</h2><div id="bar_suburb_coverage"></div></div>
       </div>
       <!-- four headline numbers for Greater Melbourne, 2024 (from the ALA records) -->
       <div class="stat-boxes">
@@ -222,7 +226,7 @@
       </section>
       <section>
         <h3>About</h3>
-        <p><strong>Author:</strong> [Your name]<br><strong>Date:</strong> October 2026</p>
+        <p><strong>Author:</strong> Abdullah Malik<br><strong>Date:</strong> October 2026</p>
         <p><strong>Created for:</strong> FIT3179 Data Visualisation, Monash University. Charts built with <a href="https://vega.github.io/vega-lite/">Vega-Lite</a> and <a href="https://vega.github.io/vega/">Vega</a>. Headings and chart titles in Fraunces, all other text in Inter, via Google Fonts.</p>
         <p><strong>Images:</strong> sunset photo: [add source and licence]. Bird photos from Wikimedia Commons: Australian Magpie and Australian Raven by JJ Harrison (CC BY-SA 3.0 / 4.0); Rainbow Lorikeet and Magpie-lark by Charles J. Sharp (CC BY-SA 4.0); Forest Raven by SkippingShoe (CC BY 4.0).</p>
         <p><strong>Use of AI:</strong> [Write in your own words what you used Claude (Anthropic) for, e.g. writing the Python data-processing scripts, writing and debugging chart specifications and page code, design and layout suggestions, and checking facts and wording.] All data comes from the sources listed.</p>
@@ -527,6 +531,7 @@
       });
     });
     vegaEmbed('#dotplot_canopy_records', 'js/dotplot_canopy_records.vl.json', { actions: false });
+    vegaEmbed('#bar_suburb_coverage', 'js/bar_suburb_coverage.vl.json', { actions: false });
     vegaEmbed('#jitter_observers', 'js/jitter_observers.vl.json', { actions: false });
     vegaEmbed('#heatmap_weekday_hour', 'js/heatmap_weekday_hour.vl.json', { actions: false });
 

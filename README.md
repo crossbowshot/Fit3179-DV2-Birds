@@ -19,6 +19,7 @@ Every chart's JSON specification is in [`js/`](js/), formatted for reading:
 | Share of trees vs share of records, by suburb | Connected dot plot | [`js/dotplot_canopy_records.vl.json`](js/dotplot_canopy_records.vl.json) |
 | Bird records per iNaturalist user | Jitter plot | [`js/jitter_observers.vl.json`](js/jitter_observers.vl.json) |
 | Bird records by weekday and hour | Heatmap | [`js/heatmap_weekday_hour.vl.json`](js/heatmap_weekday_hour.vl.json) |
+| How many bird records each suburb had | Bar chart | [`js/bar_suburb_coverage.vl.json`](js/bar_suburb_coverage.vl.json) |
 
 The spike map uses a custom "tilted" map projection, which is registered with Vega in `index.html`.
 
