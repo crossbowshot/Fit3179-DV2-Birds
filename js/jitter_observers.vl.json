@@ -63,7 +63,7 @@
       },
       "transform": [
         {
-          "calculate": "'One iNaturalist user'",
+          "calculate": "'One person'",
           "as": "heading"
         }
       ]

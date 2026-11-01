@@ -159,14 +159,6 @@
       "transform": [
         {
           "filter": "mode != 0"
-        },
-        {
-          "calculate": "datum.under_trees == 1 ? 'Yes' : 'No'",
-          "as": "under_label"
-        },
-        {
-          "calculate": "substring(datum.date, 8, 10) + '-' + substring(datum.date, 5, 7) + '-' + substring(datum.date, 0, 4)",
-          "as": "date_dmy"
         }
       ],
       "mark": {
@@ -212,14 +204,6 @@
           {
             "field": "bird",
             "title": "Bird"
-          },
-          {
-            "field": "date_dmy",
-            "title": "Date"
-          },
-          {
-            "field": "under_label",
-            "title": "Made under a tree"
           }
         ]
       }
