@@ -147,10 +147,6 @@
           {
             "field": "share_text",
             "title": "Share of all records"
-          },
-          {
-            "field": "status",
-            "title": "Native or introduced"
           }
         ]
       },

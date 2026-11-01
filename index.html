@@ -235,6 +235,17 @@
   </footer>
 
   <script>
+    // hide the "Scroll" cue once the reader starts scrolling
+    const scrollCue = document.querySelector('.scroll-cue');
+    function hideScrollCue() {
+      if (window.scrollY > 40) {
+        scrollCue.classList.add('gone');
+        window.removeEventListener('scroll', hideScrollCue);
+      }
+    }
+    window.addEventListener('scroll', hideScrollCue, { passive: true });
+    hideScrollCue();
+
     vegaEmbed('#map_states', 'js/map_states.vl.json', { actions: false }).then(async function (result) {
       // most recorded bird in each state (ALA, 2024) with its photo and credit
       const birds = await (await fetch('data/state_top_bird_2024.json')).json();

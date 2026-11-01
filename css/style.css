@@ -61,6 +61,12 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  transition: opacity 0.5s;
+}
+
+/* hidden for good once the reader starts scrolling */
+.scroll-cue.gone {
+  opacity: 0;
 }
 
 .scroll-cue span {
